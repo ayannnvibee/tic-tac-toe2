@@ -43,6 +43,10 @@ PRODUCT RULES (source of truth)
 * AI makes exactly one legal move per turn, never out of turn, never on an occupied cell, and must not freeze the UI on large boards.
 * Offline only. No ads, no accounts, no backend, no analytics.
 
+FIRST MOVE
+
+* The human moves first in every round, not only the first round of a session. This is the single constant `firstPlayerOfRound` in `lib/domain/rules.dart`; change it there if the opening move should ever alternate.
+
 ARCHITECTURE RULES
 
 * domain/ and ai/ are pure Dart with no Flutter imports, fully unit tested.
