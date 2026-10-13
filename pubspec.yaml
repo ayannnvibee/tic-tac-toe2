@@ -1,5 +1,5 @@
 name: tic_tac_toe_infinity
-description: "A new Flutter project."
+description: "Tic Tac Toe where every win grows the board."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -54,6 +54,22 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/fonts/OFL.txt
+
+  # Nunito Sans is bundled so the app never fetches fonts at runtime.
+  fonts:
+    - family: NunitoSans
+      fonts:
+        - asset: assets/fonts/NunitoSans-600.ttf
+          weight: 600
+        - asset: assets/fonts/NunitoSans-700.ttf
+          weight: 700
+        - asset: assets/fonts/NunitoSans-800.ttf
+          weight: 800
+        - asset: assets/fonts/NunitoSans-900.ttf
+          weight: 900
 
   # To add assets to your application, add an assets section, like this:
   # assets:

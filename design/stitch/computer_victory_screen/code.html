@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><title>Tic Tac Toe Infinity</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,600,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#fbf9f3;color:#1b1c19;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-tertiary-fixed": "#321200", "surface-bright": "#fbf9f3", "surface-container-highest": "#e4e2dd", "secondary-fixed-dim": "#adc6ff", "primary-fixed-dim": "#d0bcff", "primary-container": "#8455ef", "error-container": "#ffdad6", "background": "#fbf9f3", "primary": "#6b38d4", "on-surface-variant": "#494454", "secondary-container": "#2170e4", "secondary-fixed": "#d8e2ff", "surface-container-high": "#eae8e2", "on-tertiary": "#ffffff", "surface": "#fbf9f3", "on-secondary-container": "#fefcff", "on-primary-fixed-variant": "#5516be", "surface-container-lowest": "#ffffff", "outline": "#7b7486", "secondary": "#0058be", "inverse-on-surface": "#f2f1eb", "on-secondary-fixed-variant": "#004395", "surface-container-low": "#f5f3ee", "on-primary": "#ffffff", "on-error-container": "#93000a", "surface-tint": "#6d3bd7", "tertiary": "#974400", "error": "#ba1a1a", "tertiary-fixed": "#ffdbc9", "on-secondary": "#ffffff", "on-primary-fixed": "#23005c", "on-background": "#1b1c19", "on-tertiary-fixed-variant": "#763300", "tertiary-fixed-dim": "#ffb68d", "primary-fixed": "#e9ddff", "on-error": "#ffffff", "on-primary-container": "#fffbff", "on-secondary-fixed": "#001a42", "surface-container": "#f0eee8", "surface-variant": "#e4e2dd", "tertiary-container": "#bc5705", "surface-dim": "#dbdad4", "inverse-primary": "#d0bcff", "outline-variant": "#cbc3d7", "inverse-surface": "#30312d", "on-surface": "#1b1c19", "on-tertiary-container": "#fffbff" }, "borderRadius": { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, "spacing": { "margin-mobile": "1rem", "space-lg": "1.5rem", "gutter": "1rem", "margin": "1.25rem", "gutter-sm": "0.75rem", "space-md": "1rem", "space-xl": "2rem", "space-sm": "0.5rem", "space-xs": "0.25rem" }, "fontFamily": { "label-md": ["Nunito Sans"], "body-sm": ["Nunito Sans"], "label-sm": ["Nunito Sans"], "display-hero-mobile": ["Nunito Sans"], "score-num": ["Nunito Sans"], "body-lg": ["Nunito Sans"], "label-lg": ["Nunito Sans"], "headline-lg-mobile": ["Nunito Sans"], "headline-md": ["Nunito Sans"], "display-hero": ["Nunito Sans"], "headline-sm": ["Nunito Sans"], "body-md": ["Nunito Sans"], "headline-lg": ["Nunito Sans"] }, "fontSize": { "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "800" }], "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "600" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700" }], "display-hero-mobile": ["38px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "900" }], "score-num": ["32px", { "lineHeight": "36px", "fontWeight": "900" }], "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "600" }], "label-lg": ["15px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "800" }], "headline-lg-mobile": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "800" }], "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "800" }], "display-hero": ["48px", { "lineHeight": "54px", "letterSpacing": "-0.02em", "fontWeight": "900" }], "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "800" }], "body-md": ["16px", { "lineHeight": "22px", "fontWeight": "600" }], "headline-lg": ["32px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "800" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-full selection:bg-primary-fixed selection:text-on-primary-fixed"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-margin-mobile flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm"><button aria-label="Go back" class="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors" onclick="history.back()"><span class="material-symbols-outlined text-[20px]">arrow_back</span></button><img alt="Tic Tac Toe Infinity Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6n17mzA-WIBCA5iIATaQ_JUfiCaz2LU4V347TTumQZRtC-bKvh_mBneNqKxx_8JEBZSmwFF37kv9VsdELk3WLGHtckvDIt3xCCnX45QKd8OKDktD9NDYD_2-627DRMHrsO63CWMo03A76qJCov_a-Xiw4nGBu1PJoc3rkgOMIFLn_xpS6BI4GmZ5TTbfA4U3vU68nULu1E-n0rpjHxx_jyKbKM17ESQ5bswJRmTE301s1wzUePPVoqQ"/><h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate max-w-[140px]">Match Summary</h1></div><div class="flex items-center gap-space-xs"><button aria-label="Audio toggle" class="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[20px]">volume_up</span></button><button aria-label="Quick settings" class="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[20px]">settings</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-space-xs"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col flex-1 relative w-full pt-16 pb-safe px-margin-mobile bg-surface"><div class="flex flex-col w-full relative select-none pb-space-lg">
+<!-- Underlying Game Arena Context -->
+<div class="flex flex-col w-full max-w-[420px] mx-auto opacity-45 pointer-events-none filter blur-[1.5px] transition-all">
+<!-- Opponent Versus Banner -->
+<div class="bg-surface-container-low rounded-lg p-space-sm shadow-sm flex items-center justify-between mb-space-md">
+<div class="flex items-center gap-space-xs">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary shadow-sm">
+<span class="material-symbols-outlined text-[20px]">person</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">YOU (X)</span>
+<span class="font-headline-sm text-headline-sm text-on-surface leading-tight">1 Win</span>
+</div>
+</div>
+<div class="px-space-xs py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">
+        ROUND 3
+      </div>
+<div class="flex items-center gap-space-xs flex-row-reverse">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed flex items-center justify-center text-tertiary shadow-sm">
+<span class="material-symbols-outlined text-[20px]">smart_toy</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-tertiary">BOT (O)</span>
+<span class="font-headline-sm text-headline-sm text-tertiary leading-tight">2 Wins</span>
+</div>
+</div>
+</div>
+<!-- Frozen Grid Playfield with AI Diagonal Win Trace -->
+<div class="relative bg-surface-container-high rounded-lg p-space-sm shadow-sm aspect-square w-full grid grid-cols-3 grid-rows-3 gap-gutter-sm">
+<!-- Cell 0 (Top Left - Bot O Winning Line) -->
+<div class="bg-tertiary-fixed rounded-DEFAULT flex items-center justify-center shadow-md relative overflow-hidden">
+<div class="w-16 h-16 rounded-full border-[10px] border-tertiary-container shadow-inner"></div>
+<div class="absolute inset-0 bg-tertiary/10"></div>
+</div>
+<!-- Cell 1 (Top Mid - Player X) -->
+<div class="bg-surface-container-lowest rounded-DEFAULT flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-secondary text-[52px]">close</span>
+</div>
+<!-- Cell 2 (Top Right - Empty) -->
+<div class="bg-surface-container-lowest rounded-DEFAULT flex items-center justify-center opacity-60"></div>
+<!-- Cell 3 (Mid Left - Player X) -->
+<div class="bg-surface-container-lowest rounded-DEFAULT flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-secondary text-[52px]">close</span>
+</div>
+<!-- Cell 4 (Center - Bot O Winning Line) -->
+<div class="bg-tertiary-fixed rounded-DEFAULT flex items-center justify-center shadow-md relative overflow-hidden">
+<div class="w-16 h-16 rounded-full border-[10px] border-tertiary-container shadow-inner"></div>
+<div class="absolute inset-0 bg-tertiary/10"></div>
+</div>
+<!-- Cell 5 (Mid Right - Empty) -->
+<div class="bg-surface-container-lowest rounded-DEFAULT flex items-center justify-center opacity-60"></div>
+<!-- Cell 6 (Bottom Left - Empty) -->
+<div class="bg-surface-container-lowest rounded-DEFAULT flex items-center justify-center opacity-60"></div>
+<!-- Cell 7 (Bottom Mid - Player X) -->
+<div class="bg-surface-container-lowest rounded-DEFAULT flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-secondary text-[52px]">close</span>
+</div>
+<!-- Cell 8 (Bottom Right - Bot O Winning Line) -->
+<div class="bg-tertiary-fixed rounded-DEFAULT flex items-center justify-center shadow-md relative overflow-hidden">
+<div class="w-16 h-16 rounded-full border-[10px] border-tertiary-container shadow-inner"></div>
+<div class="absolute inset-0 bg-tertiary/10"></div>
+</div>
+</div>
+</div>
+<!-- Warm Defeat Modal Overlay (Non-punitive, tactile, bright) -->
+<div class="fixed inset-0 z-40 bg-on-tertiary-fixed/30 backdrop-blur-[2px] flex items-center justify-center p-space-md pt-16">
+<div class="w-full max-w-[360px] bg-surface-container-lowest rounded-xl shadow-2xl p-space-md flex flex-col items-center text-center relative overflow-hidden transition-all duration-300" id="defeat-card">
+<!-- Ambient Decorative Top Halo -->
+<div class="absolute -top-16 left-1/2 -translate-x-1/2 w-48 h-48 bg-tertiary-fixed/40 rounded-full blur-2xl pointer-events-none"></div>
+<!-- Cute Playful AI Emblem -->
+<div class="relative mt-space-xs mb-space-sm">
+<!-- Floating Halo Ring -->
+<div class="w-20 h-20 rounded-full bg-tertiary-fixed-dim/30 flex items-center justify-center mx-auto shadow-inner">
+<div class="w-16 h-16 rounded-full bg-tertiary-fixed flex items-center justify-center shadow-md text-tertiary relative">
+<span class="material-symbols-outlined text-[38px] text-tertiary animate-pulse" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+<!-- Friendly Winking Sparkle Badge -->
+<div class="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Header & Supportive Copy -->
+<div class="flex flex-col gap-0.5 mb-space-md">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight uppercase">
+          Computer Wins!
+        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant font-bold">
+          So close! Give it another try.
+        </p>
+</div>
+<!-- Level Retention Card (Non-punitive reassurance) -->
+<div class="w-full bg-tertiary-fixed/40 rounded-lg p-space-sm flex flex-col items-center gap-space-xs mb-space-md shadow-sm">
+<div class="flex items-center gap-space-xs text-on-tertiary-fixed">
+<span class="material-symbols-outlined text-[18px] text-tertiary-container">grid_view</span>
+<span class="font-label-lg text-label-lg font-extrabold">Current Level: Level 01</span>
+</div>
+<div class="bg-surface-container-lowest/80 px-space-sm py-1 rounded-full shadow-xs flex items-center gap-1">
+<span class="material-symbols-outlined text-tertiary text-[14px]">check_circle</span>
+<span class="font-label-sm text-label-sm text-on-tertiary-fixed-variant">Board stays at 3×3 • No progress lost!</span>
+</div>
+</div>
+<!-- Quick Session Stat Pill Snippet -->
+<div class="w-full grid grid-cols-2 gap-space-xs mb-space-md">
+<div class="bg-surface-container-low rounded-DEFAULT p-space-xs flex flex-col items-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Turns Taken</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">5 Moves</span>
+</div>
+<div class="bg-surface-container-low rounded-DEFAULT p-space-xs flex flex-col items-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant">AI Difficulty</span>
+<span class="font-headline-sm text-headline-sm text-tertiary font-black">Friendly</span>
+</div>
+</div>
+<!-- Action Pod -->
+<div class="w-full flex flex-col gap-space-sm mb-space-sm">
+<!-- Chunky Tactile Retry Button (Primary Citrus Orange Action) -->
+<button class="w-full py-3.5 px-space-md bg-gradient-to-b from-tertiary-container to-tertiary text-on-tertiary rounded-lg font-headline-sm text-headline-sm tracking-wide shadow-[0_6px_0_0_#763300] active:translate-y-1 active:shadow-[0_2px_0_0_#763300] transition-all flex items-center justify-center gap-space-xs" id="retry-btn">
+<span class="material-symbols-outlined text-[22px]">replay</span>
+<span>RETRY LEVEL</span>
+</button>
+<!-- Secondary Tactile New Game Button -->
+<button class="w-full py-3 px-space-md bg-surface-container-high text-on-surface rounded-lg font-label-lg text-label-lg shadow-[0_4px_0_0_#dbdad4] active:translate-y-1 active:shadow-[0_1px_0_0_#dbdad4] transition-all flex items-center justify-center gap-space-xs" id="new-game-btn">
+<span class="material-symbols-outlined text-[20px]">sports_esports</span>
+<span>NEW GAME</span>
+</button>
+</div>
+<!-- Friendly Tip Pod -->
+<div class="w-full pt-space-xs flex items-center justify-center gap-space-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-tertiary">lightbulb</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Tip: Block the AI's diagonal moves early!</span>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const retryBtn = document.getElementById('retry-btn');
+    const newGameBtn = document.getElementById('new-game-btn');
+    const modal = document.getElementById('defeat-card');
+
+    if (retryBtn) {
+      retryBtn.addEventListener('click', () => {
+        retryBtn.classList.add('scale-95');
+        setTimeout(() => {
+          retryBtn.classList.remove('scale-95');
+          // Non-punitive quick restart visual reset
+          modal.style.transform = 'scale(0.96)';
+          modal.style.opacity = '0';
+          setTimeout(() => {
+            window.location.reload();
+          }, 180);
+        }, 100);
+      });
+    }
+
+    if (newGameBtn) {
+      newGameBtn.addEventListener('click', () => {
+        newGameBtn.classList.add('scale-95');
+        setTimeout(() => {
+          newGameBtn.classList.remove('scale-95');
+          window.location.reload();
+        }, 120);
+      });
+    }
+  })();
+</script></main></body></html>

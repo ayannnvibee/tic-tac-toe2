@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><title>Tic Tac Toe Infinity</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,600,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#fbf9f3;color:#1b1c19;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-tertiary-fixed": "#321200", "surface-bright": "#fbf9f3", "surface-container-highest": "#e4e2dd", "secondary-fixed-dim": "#adc6ff", "primary-fixed-dim": "#d0bcff", "primary-container": "#8455ef", "error-container": "#ffdad6", "background": "#fbf9f3", "primary": "#6b38d4", "on-surface-variant": "#494454", "secondary-container": "#2170e4", "secondary-fixed": "#d8e2ff", "surface-container-high": "#eae8e2", "on-tertiary": "#ffffff", "surface": "#fbf9f3", "on-secondary-container": "#fefcff", "on-primary-fixed-variant": "#5516be", "surface-container-lowest": "#ffffff", "outline": "#7b7486", "secondary": "#0058be", "inverse-on-surface": "#f2f1eb", "on-secondary-fixed-variant": "#004395", "surface-container-low": "#f5f3ee", "on-primary": "#ffffff", "on-error-container": "#93000a", "surface-tint": "#6d3bd7", "tertiary": "#974400", "error": "#ba1a1a", "tertiary-fixed": "#ffdbc9", "on-secondary": "#ffffff", "on-primary-fixed": "#23005c", "on-background": "#1b1c19", "on-tertiary-fixed-variant": "#763300", "tertiary-fixed-dim": "#ffb68d", "primary-fixed": "#e9ddff", "on-error": "#ffffff", "on-primary-container": "#fffbff", "on-secondary-fixed": "#001a42", "surface-container": "#f0eee8", "surface-variant": "#e4e2dd", "tertiary-container": "#bc5705", "surface-dim": "#dbdad4", "inverse-primary": "#d0bcff", "outline-variant": "#cbc3d7", "inverse-surface": "#30312d", "on-surface": "#1b1c19", "on-tertiary-container": "#fffbff" }, "borderRadius": { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, "spacing": { "margin-mobile": "1rem", "space-lg": "1.5rem", "gutter": "1rem", "margin": "1.25rem", "gutter-sm": "0.75rem", "space-md": "1rem", "space-xl": "2rem", "space-sm": "0.5rem", "space-xs": "0.25rem" }, "fontFamily": { "label-md": ["Nunito Sans"], "body-sm": ["Nunito Sans"], "label-sm": ["Nunito Sans"], "display-hero-mobile": ["Nunito Sans"], "score-num": ["Nunito Sans"], "body-lg": ["Nunito Sans"], "label-lg": ["Nunito Sans"], "headline-lg-mobile": ["Nunito Sans"], "headline-md": ["Nunito Sans"], "display-hero": ["Nunito Sans"], "headline-sm": ["Nunito Sans"], "body-md": ["Nunito Sans"], "headline-lg": ["Nunito Sans"] }, "fontSize": { "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "800" }], "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "600" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700" }], "display-hero-mobile": ["38px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "900" }], "score-num": ["32px", { "lineHeight": "36px", "fontWeight": "900" }], "body-lg": ["18px", { "lineHeight": "26px", "fontWeight": "600" }], "label-lg": ["15px", { "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "800" }], "headline-lg-mobile": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "800" }], "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "800" }], "display-hero": ["48px", { "lineHeight": "54px", "letterSpacing": "-0.02em", "fontWeight": "900" }], "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "800" }], "body-md": ["16px", { "lineHeight": "22px", "fontWeight": "600" }], "headline-lg": ["32px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "800" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-full selection:bg-primary-fixed selection:text-on-primary-fixed"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-margin-mobile flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm"><button aria-label="Go back" class="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors" onclick="history.back()"><span class="material-symbols-outlined text-[20px]">arrow_back</span></button><img alt="Tic Tac Toe Infinity Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkIREt7SC5bM6XghB25tKITQ_VQ3WT5Z8vvpBzmAqg-4jWX2NXF5ByxrAA2jjJ6_ppLAdcg3iecFGdWGis5Jf4wIjrGu0FtR3NBEILV9k4zJtPDqq5AMqXZ6e08wT-MnxFsxq65mS_FSisVuhJ-XWu50Am4T9mP1lGTxQRFGM0V4ywUhIIP7l65u81KNkejGdKnsskpWnXK9ll7xyrBv6ZpWtXh6fkQ4gQpgDvv_Rf2X5OuFG5P-gB0g"/><h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate max-w-[140px]">Active Match</h1></div><div class="flex items-center gap-space-xs"><button aria-label="Audio toggle" class="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[20px]">volume_up</span></button><button aria-label="Quick settings" class="w-11 h-11 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[20px]">settings</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-space-xs"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col flex-1 relative w-full pt-16 pb-safe px-margin-mobile bg-surface"><div class="flex flex-col w-full pb-6 space-y-4">
+<!-- Level Selector Segment Bar -->
+<div class="w-full overflow-x-auto scrollbar-none py-1">
+<div class="flex items-center gap-space-xs bg-surface-container-high p-1 rounded-full w-max mx-auto shadow-sm">
+<button class="px-3 py-1.5 rounded-full text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface transition-all flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">grid_3x3</span>
+        Lv 1 (3×3)
+      </button>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-lowest text-primary shadow-sm font-label-md text-label-md flex items-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">grid_4x4</span>
+<span>Lv 2 (4×4)</span>
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+</button>
+<button class="px-3 py-1.5 rounded-full text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface transition-all flex items-center gap-1 opacity-80">
+<span class="material-symbols-outlined text-[14px]">apps</span>
+        Lv 3 (5×5)
+      </button>
+<button class="px-3 py-1.5 rounded-full text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface transition-all flex items-center gap-1 opacity-70">
+<span class="material-symbols-outlined text-[14px]">drive_file_rename_outline</span>
+        Lv 4 (6×6)
+      </button>
+</div>
+</div>
+<!-- Level Information Banner & HUD -->
+<div class="flex flex-col gap-space-sm bg-surface-container-low rounded-lg p-space-md shadow-sm">
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-2">
+<div class="w-2 h-6 rounded-full bg-primary"></div>
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block">Progression Zone</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">LEVEL 02 • 4×4 EXPANDED</h2>
+</div>
+</div>
+<div class="bg-primary-container text-on-primary-container px-2.5 py-1 rounded-full font-label-sm text-label-sm shadow-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span>Win: 4 In A Row</span>
+</div>
+</div>
+<!-- Matchup Sector Card -->
+<div class="grid grid-cols-7 items-center bg-surface-container-lowest rounded-DEFAULT p-space-sm shadow-sm">
+<!-- Player X -->
+<div class="col-span-3 flex items-center gap-2 bg-secondary-fixed/50 p-2 rounded-DEFAULT">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shadow-sm font-headline-sm text-headline-sm">
+          ✕
+        </div>
+<div class="min-w-0">
+<div class="flex items-center gap-1">
+<span class="font-label-md text-label-md text-secondary truncate">YOU</span>
+<span class="w-2 h-2 rounded-full bg-secondary animate-ping"></span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Turn #06</span>
+</div>
+</div>
+<!-- VS Badge -->
+<div class="col-span-1 flex justify-center">
+<div class="w-7 h-7 rounded-full bg-surface-container-highest flex items-center justify-center font-label-sm text-label-sm text-on-surface-variant shadow-inner">
+          VS
+        </div>
+</div>
+<!-- AI Bot O -->
+<div class="col-span-3 flex items-center justify-end gap-2 p-2 rounded-DEFAULT">
+<div class="text-right min-w-0">
+<span class="font-label-md text-label-md text-tertiary truncate block">CYBER BOT</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Calculating...</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed flex items-center justify-center text-tertiary shadow-sm font-headline-sm text-headline-sm">
+          ○
+        </div>
+</div>
+</div>
+</div>
+<!-- Main Active Board Display (Tactile 4x4 Grid) -->
+<div class="relative w-full aspect-square max-w-[360px] mx-auto bg-surface-container p-3 rounded-lg shadow-sm flex flex-col justify-center">
+<!-- Active Grid Matrix (4x4) -->
+<div class="grid grid-cols-4 grid-rows-4 gap-2 w-full h-full" id="gameBoard4x4">
+<!-- Row 1 -->
+<button class="tactile-tile bg-surface-container-lowest rounded-xl flex items-center justify-center shadow-sm active:translate-y-0.5 transition-transform">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary font-black drop-shadow-sm select-none">✕</span>
+</button>
+<button class="tactile-tile bg-surface-container-lowest rounded-xl flex items-center justify-center shadow-sm active:translate-y-0.5 transition-transform">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-tertiary-container font-black drop-shadow-sm select-none">○</span>
+</button>
+<button class="tactile-tile bg-surface-container-lowest rounded-xl flex items-center justify-center shadow-sm active:translate-y-0.5 transition-transform hover:bg-surface-container-low">
+</button>
+<button class="tactile-tile bg-surface-container-lowest rounded-xl flex items-center justify-center shadow-sm active:translate-y-0.5 transition-transform hover:bg-surface-container-low">
+</button>
+<!-- Row 2 -->
+<button class="tactile-tile bg-surface-container-lowest rounded-xl flex items-center justify-center shadow-sm active:translate-y-0.5 transition-transform hover:bg-surface-container-low">
+</button>
+<button class="tactile-tile bg-surface-container-lowest rounded-xl flex items-center justify-center shadow-sm active:translate-y-0.5 transition-transform">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary font-black drop-shadow-sm select-none">✕</span>
+</button>
+<button class="tactile-tile bg-surface-container-lowest rounded-xl flex items-center justify-center shadow-sm active:translate-y-0.5 transition-transform">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-tertiary-container font-black drop-shadow-sm select-none">○</span>
+</button>
+<button class="tactile-tile bg-surface-container-lowest rounded-xl flex items-center justify-center shadow-sm active:translate-y-0.5 transition-transform hover:bg-surface-container-low">
+</button>
+<!-- Row 3: Diagonal Streak Opportunity -->
+<button class="tactile-tile bg-surface-container-lowest rounded-xl flex items-center justify-center shadow-sm active:translate-y-0.5 transition-transform hover:bg-surface-container-low">
+</button>
+<button class="tactile-tile bg-surface-container-lowest rounded-xl flex items-center justify-center shadow-sm active:translate-y-0.5 transition-transform">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-tertiary-container font-black drop-shadow-sm select-none">○</span>
+</button>
+<button class="tactile-tile bg-primary-fixed/40 rounded-xl flex items-center justify-center shadow-sm active:translate-y-0.5 transition-transform">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary font-black drop-shadow-sm select-none">✕</span>
+</button>
+<button class="tactile-tile bg-surface-container-lowest rounded-xl flex items-center justify-center shadow-sm active:translate-y-0.5 transition-transform hover:bg-surface-container-low">
+</button>
+<!-- Row 4: Critical Block Cell -->
+<button class="tactile-tile bg-surface-container-lowest rounded-xl flex items-center justify-center shadow-sm active:translate-y-0.5 transition-transform hover:bg-surface-container-low">
+</button>
+<button class="tactile-tile bg-surface-container-lowest rounded-xl flex items-center justify-center shadow-sm active:translate-y-0.5 transition-transform hover:bg-surface-container-low">
+</button>
+<button class="tactile-tile bg-surface-container-lowest rounded-xl flex items-center justify-center shadow-sm active:translate-y-0.5 transition-transform hover:bg-surface-container-low">
+</button>
+<!-- Target Winning Point -->
+<button class="tactile-tile bg-tertiary-fixed/60 rounded-xl flex items-center justify-center shadow-sm active:translate-y-0.5 transition-all animate-bounce">
+<span class="material-symbols-outlined text-tertiary text-[24px]">target</span>
+</button>
+</div>
+</div>
+<!-- Mini Progression Showcase Gallery -->
+<div class="flex flex-col gap-space-sm bg-surface-container-low rounded-lg p-space-md shadow-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface">Upcoming Board Formats</span>
+<span class="font-label-sm text-label-sm text-primary flex items-center gap-0.5">
+        Adaptive Scaling
+        <span class="material-symbols-outlined text-[14px]">auto_awesome</span>
+</span>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<!-- 5x5 Preview Card -->
+<div class="bg-surface-container-lowest rounded-DEFAULT p-space-sm shadow-sm flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface">5×5 Master</span>
+<span class="bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm px-1.5 py-0.5 rounded-full">Lv 3</span>
+</div>
+<div class="w-full h-16 bg-surface-container-low rounded-DEFAULT flex items-center justify-center relative overflow-hidden">
+<div class="grid grid-cols-5 gap-1 p-2 w-full h-full place-items-center opacity-70">
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-tertiary"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-tertiary"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">Win: 5 in a row</span>
+</div>
+<!-- 6x6 Infinity Card -->
+<div class="bg-surface-container-lowest rounded-DEFAULT p-space-sm shadow-sm flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface">6×6 Infinity</span>
+<span class="bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm px-1.5 py-0.5 rounded-full">Lv 4</span>
+</div>
+<div class="w-full h-16 bg-surface-container-low rounded-DEFAULT flex items-center justify-center relative overflow-hidden">
+<div class="absolute inset-0 bg-primary-fixed/20 flex flex-col items-center justify-center gap-1">
+<span class="material-symbols-outlined text-primary text-[20px]">pan_tool</span>
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-tight">Pan &amp; Zoom</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">Win: 5 in a row</span>
+</div>
+</div>
+<!-- Explanatory Micro-Callout -->
+<div class="flex items-center gap-2 bg-surface-container p-2 rounded-DEFAULT">
+<span class="material-symbols-outlined text-primary text-[18px]">info</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-snug">
+        Dynamic responsive cell grid adapts seamlessly as the puzzle expands!
+      </p>
+</div>
+</div>
+<!-- Primary Interactive Control Action -->
+<div class="w-full pt-1">
+<button class="w-full py-3.5 px-6 rounded-full bg-primary text-on-primary font-headline-sm text-headline-sm shadow-md active:translate-y-1 transition-all flex items-center justify-center gap-2">
+<span>Continue Match</span>
+<span class="material-symbols-outlined text-[20px]">play_arrow</span>
+</button>
+</div>
+</div>
+<script>
+  // Simple micro-interaction for tile clicking
+  document.querySelectorAll('#gameBoard4x4 .tactile-tile').forEach(tile => {
+    tile.addEventListener('click', function() {
+      if (!this.querySelector('span') && !this.classList.contains('animate-bounce')) {
+        const mark = document.createElement('span');
+        mark.className = 'font-headline-lg-mobile text-headline-lg-mobile text-secondary font-black drop-shadow-sm select-none scale-0 transition-transform duration-200';
+        mark.textContent = '✕';
+        this.appendChild(mark);
+        requestAnimationFrame(() => mark.classList.remove('scale-0'));
+      }
+    });
+  });
+</script></main></body></html>
