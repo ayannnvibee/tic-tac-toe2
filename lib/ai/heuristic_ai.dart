@@ -2,6 +2,7 @@ import 'dart:math';
 
 import '../domain/domain.dart';
 import 'ai_player.dart';
+import 'difficulty_tuning.dart';
 import 'grid.dart';
 
 /// Rule and score based engine for 4x4 boards and larger.
@@ -17,21 +18,20 @@ import 'grid.dart';
 ///  6. A depth-2 look at the best [searchWidth] candidates, inside
 ///     [timeBudget]; if the budget runs out the best heuristic move is played.
 ///
-/// Easy stops after step 2 and plays a random candidate. Medium and hard run
-/// every step.
+/// Easy stops after step 2 and plays a random candidate. Hard runs every
+/// step. Medium does too, except that it sometimes blunders, as set in
+/// difficulty_tuning.dart: after step 1 it plays a random one of the few best
+/// scored cells and skips the block and threat rules.
 class HeuristicAi implements AiPlayer {
   HeuristicAi({
     this.difficulty = defaultDifficulty,
     Random? random,
-    this.timeBudget = defaultTimeBudget,
-    this.searchWidth = 8,
+    this.tuning,
+    this.timeBudget = aiTimeBudget,
+    this.searchWidth = aiSearchWidth,
   }) : _random = random ?? Random();
 
-  /// Time allowed before the depth-2 search gives up. Kept below the 150 ms
-  /// ceiling for a whole move.
-  static const Duration defaultTimeBudget = Duration(milliseconds: 100);
-
-  static const int candidateRadius = 2;
+  static const int candidateRadius = aiCandidateRadius;
 
   /// Score of a window by how many of the mover's marks it already holds.
   static const List<double> _ownWeights = [1, 12, 120, 1200, 12000];
@@ -46,6 +46,10 @@ class HeuristicAi implements AiPlayer {
   static const double _replyWeight = 0.5;
 
   final Difficulty difficulty;
+
+  /// Overrides the table in difficulty_tuning.dart when set.
+  final DifficultyTuning? tuning;
+
   final Duration timeBudget;
   final int searchWidth;
   final Random _random;
@@ -74,9 +78,17 @@ class HeuristicAi implements AiPlayer {
       return _pick(grid, blocks.isNotEmpty ? blocks : candidates);
     }
 
+    final active = tuning ?? tuningFor(difficulty, board.size);
     final scores = <int, double>{
-      for (final cell in candidates) cell: _score(grid, cell, Grid.ai),
+      for (final cell in candidates)
+        cell: _score(grid, cell, Grid.ai, lineDefence: active.lineDefence),
     };
+
+    if (active.blunderChance > 0 &&
+        _random.nextDouble() < active.blunderChance) {
+      return _blunder(grid, candidates, scores, active.blunderPool);
+    }
+
     if (blocks.isNotEmpty) return _best(grid, blocks, scores);
 
     // 3. Threats.
@@ -120,13 +132,34 @@ class HeuristicAi implements AiPlayer {
         if (value > reply) reply = value;
       }
       grid.cells[cell] = Grid.empty;
-      values[cell] = scores[cell]! - _replyWeight * reply;
+      values[cell] = scores[cell]! - _replyWeight * active.lineDefence * reply;
     }
     return grid.positionOf(_bestIndex(top, values));
   }
 
   Position _pick(Grid grid, List<int> cells) =>
       grid.positionOf(cells[_random.nextInt(cells.length)]);
+
+  /// A random one of the [pool] best scored [cells]. Equal scores are ordered
+  /// at random. A blocking cell scores high, so it is usually in the pool,
+  /// but it is not forced.
+  Position _blunder(
+    Grid grid,
+    List<int> cells,
+    Map<int, double> scores,
+    int pool,
+  ) {
+    final ranked = [
+      for (final cell in cells)
+        (cell: cell, score: scores[cell]!, tie: _random.nextDouble()),
+    ];
+    ranked.sort((a, b) {
+      final byScore = b.score.compareTo(a.score);
+      return byScore != 0 ? byScore : a.tie.compareTo(b.tie);
+    });
+    final top = min(pool, ranked.length);
+    return grid.positionOf(ranked[_random.nextInt(top)].cell);
+  }
 
   Position _best(Grid grid, List<int> cells, Map<int, double> scores) =>
       grid.positionOf(_bestIndex(cells, scores));
@@ -189,7 +222,15 @@ class HeuristicAi implements AiPlayer {
   /// Every window of winLength cells through [cell] is counted unless it holds
   /// both players' marks. Fuller windows weigh far more. With [offenceOnly],
   /// windows that only hold opponent marks (the blocking value) are skipped.
-  double _score(Grid grid, int cell, int who, {bool offenceOnly = false}) {
+  /// [lineDefence] scales the blocking value of windows that are not yet an
+  /// immediate threat; a window one mark from winning always counts in full.
+  double _score(
+    Grid grid,
+    int cell,
+    int who, {
+    bool offenceOnly = false,
+    double lineDefence = 1,
+  }) {
     final size = grid.size;
     final length = grid.winLength;
     final cells = grid.cells;
@@ -225,7 +266,8 @@ class HeuristicAi implements AiPlayer {
         if (other == 0) {
           score += _ownWeights[own];
         } else if (!offenceOnly) {
-          score += _opponentWeights[other];
+          final urgent = other >= length - 1;
+          score += _opponentWeights[other] * (urgent ? 1 : lineDefence);
         }
       }
     }

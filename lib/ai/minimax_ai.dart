@@ -2,37 +2,32 @@ import 'dart:math';
 
 import '../domain/domain.dart';
 import 'ai_player.dart';
+import 'difficulty_tuning.dart';
 import 'grid.dart';
 
 /// Exhaustive minimax with alpha-beta pruning. Only practical on 3x3.
 ///
 /// * hard: perfect play, never loses.
-/// * medium: perfect play, except that with probability [blunderChance] it
-///   plays a random move that does not lose on the spot. Such a move can still
-///   walk into a fork, which is what lets the human win and progress.
+/// * medium: perfect play, except that it sometimes blunders, as set in
+///   difficulty_tuning.dart. A blunder plays a random one of the few best
+///   moves, which is what lets the human win and progress.
 /// * easy: takes a win, blocks a win, otherwise plays at random.
 ///
 /// Every difficulty takes an immediate win when one exists.
 class MinimaxAi implements AiPlayer {
-  MinimaxAi({
-    this.difficulty = defaultDifficulty,
-    Random? random,
-    this.blunderChance = defaultBlunderChance,
-  }) : assert(blunderChance >= 0 && blunderChance <= 1),
-       _random = random ?? Random();
-
-  static const double defaultBlunderChance = 0.15;
+  MinimaxAi({this.difficulty = defaultDifficulty, Random? random, this.tuning})
+    : _random = random ?? Random();
 
   /// The largest board this engine will search.
   static const int maxBoardSize = 3;
 
   static const int _winScore = 10;
 
-  /// The value of a move that lets the human win with their very next move.
-  static const int _lostNextTurn = 1 - _winScore;
-
   final Difficulty difficulty;
-  final double blunderChance;
+
+  /// Overrides the table in difficulty_tuning.dart when set.
+  final DifficultyTuning? tuning;
+
   final Random _random;
 
   @override
@@ -65,17 +60,13 @@ class MinimaxAi implements AiPlayer {
 
     if (difficulty == Difficulty.easy) return _pick(grid, moves);
 
-    final values = [for (final move in moves) _valueOf(grid, move)];
-
-    if (difficulty == Difficulty.medium &&
-        _random.nextDouble() < blunderChance) {
-      final safe = [
-        for (var i = 0; i < moves.length; i++)
-          if (values[i] > _lostNextTurn) moves[i],
-      ];
-      if (safe.isNotEmpty) return _pick(grid, safe);
+    final active = tuning ?? tuningFor(difficulty, board.size);
+    if (active.blunderChance > 0 &&
+        _random.nextDouble() < active.blunderChance) {
+      return _blunder(grid, empty, active.blunderPool);
     }
 
+    final values = [for (final move in moves) _valueOf(grid, move)];
     final best = values.reduce(max);
     return _pick(grid, [
       for (var i = 0; i < moves.length; i++)
@@ -85,6 +76,21 @@ class MinimaxAi implements AiPlayer {
 
   Position _pick(Grid grid, List<int> moves) =>
       grid.positionOf(moves[_random.nextInt(moves.length)]);
+
+  /// A random one of the [pool] best valued [moves]. Equal values are
+  /// ordered at random, and a needed block is not forced.
+  Position _blunder(Grid grid, List<int> moves, int pool) {
+    final ranked = [
+      for (final move in moves)
+        (move: move, value: _valueOf(grid, move), tie: _random.nextDouble()),
+    ];
+    ranked.sort((a, b) {
+      final byValue = b.value.compareTo(a.value);
+      return byValue != 0 ? byValue : a.tie.compareTo(b.tie);
+    });
+    final top = min(pool, ranked.length);
+    return grid.positionOf(ranked[_random.nextInt(top)].move);
+  }
 
   /// The minimax value of the AI playing [move], which is known not to win
   /// immediately. Positive is good for the AI; sooner wins score higher.

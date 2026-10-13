@@ -2,30 +2,31 @@ import 'dart:math';
 
 import '../domain/domain.dart';
 import 'ai_player.dart';
+import 'difficulty_tuning.dart';
 import 'heuristic_ai.dart';
 import 'minimax_ai.dart';
 
 /// The computer opponent: minimax on 3x3, the heuristic engine on anything
 /// larger. Pass a seeded [random] for reproducible moves.
+///
+/// [tuning] replaces the table in difficulty_tuning.dart for every board
+/// size; leave it null to use the table.
 class GameAi implements AiPlayer {
   factory GameAi({
     Difficulty difficulty = defaultDifficulty,
     Random? random,
-    double blunderChance = MinimaxAi.defaultBlunderChance,
-    Duration timeBudget = HeuristicAi.defaultTimeBudget,
+    DifficultyTuning? tuning,
+    Duration timeBudget = aiTimeBudget,
   }) {
     // One generator shared by both engines keeps a seeded game reproducible.
     final shared = random ?? Random();
     return GameAi._(
       difficulty,
-      MinimaxAi(
-        difficulty: difficulty,
-        random: shared,
-        blunderChance: blunderChance,
-      ),
+      MinimaxAi(difficulty: difficulty, random: shared, tuning: tuning),
       HeuristicAi(
         difficulty: difficulty,
         random: shared,
+        tuning: tuning,
         timeBudget: timeBudget,
       ),
     );

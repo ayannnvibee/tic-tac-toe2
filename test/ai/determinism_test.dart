@@ -17,7 +17,10 @@ void main() {
               GameAi(
                 difficulty: difficulty,
                 random: Random(seed),
-                blunderChance: 0.5,
+                tuning: const DifficultyTuning(
+                  blunderChance: 0.5,
+                  blunderPool: 3,
+                ),
               ),
               size,
               seed + 1000,
@@ -35,7 +38,13 @@ void main() {
       final games = {
         for (var seed = 0; seed < 20; seed++)
           playRound(
-            GameAi(random: Random(seed), blunderChance: 0.5),
+            GameAi(
+              random: Random(seed),
+              tuning: const DifficultyTuning(
+                blunderChance: 0.5,
+                blunderPool: 3,
+              ),
+            ),
             3,
             7,
           ).join(','),

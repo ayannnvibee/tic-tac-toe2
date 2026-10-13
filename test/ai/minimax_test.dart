@@ -66,7 +66,7 @@ void main() {
 
   group('medium 3x3', () {
     test('with no blunder chance it never loses', () {
-      final ai = GameAi(random: Random(5), blunderChance: 0);
+      final ai = GameAi(random: Random(5), tuning: noBlunders);
       final outcomes = _Outcomes();
       _humanToMove(ai, Board.empty(3), outcomes);
       expect(outcomes.humanWins, 0);
@@ -75,7 +75,7 @@ void main() {
     test('with blunders the human can win', () {
       var humanWins = 0;
       for (var seed = 0; seed < 10; seed++) {
-        final ai = GameAi(random: Random(seed), blunderChance: 1);
+        final ai = GameAi(random: Random(seed), tuning: alwaysBlunder);
         final outcomes = _Outcomes();
         _humanToMove(ai, Board.empty(3), outcomes);
         humanWins += outcomes.humanWins;
@@ -83,20 +83,28 @@ void main() {
       expect(humanWins, greaterThan(0));
     });
 
-    test('the default blunder chance is 15%', () {
-      expect(MinimaxAi.defaultBlunderChance, 0.15);
-      expect(MinimaxAi().blunderChance, 0.15);
-    });
-
-    test('a blunder never hands over an immediate win', () {
-      // X threatens the top row; every blunder must still block at (0, 2).
+    test('a blunder still takes an immediate win', () {
+      // O can finish the middle row at (1, 2).
       final board = Board.empty(3)
           .place(const Position(0, 0), Mark.x)
+          .place(const Position(1, 0), Mark.o)
+          .place(const Position(2, 2), Mark.x)
           .place(const Position(1, 1), Mark.o)
-          .place(const Position(0, 1), Mark.x);
+          .place(const Position(0, 2), Mark.x);
       for (var seed = 0; seed < 50; seed++) {
-        final ai = GameAi(random: Random(seed), blunderChance: 1);
-        expect(ai.chooseMove(board, aiMark, humanMark), const Position(0, 2));
+        final ai = GameAi(random: Random(seed), tuning: alwaysBlunder);
+        expect(ai.chooseMove(board, aiMark, humanMark), const Position(1, 2));
+      }
+    });
+  });
+
+  group('tuning table', () {
+    test('medium blunders on every board size, hard never does', () {
+      for (var size = 3; size <= 12; size++) {
+        final medium = tuningFor(Difficulty.medium, size);
+        expect(medium.blunderChance, greaterThan(0), reason: 'size $size');
+        expect(medium.blunderPool, inInclusiveRange(3, 5));
+        expect(tuningFor(Difficulty.hard, size).blunderChance, 0);
       }
     });
   });

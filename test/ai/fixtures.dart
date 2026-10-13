@@ -8,6 +8,12 @@ const WinChecker winChecker = WinChecker();
 const Mark aiMark = Mark.o;
 const Mark humanMark = Mark.x;
 
+/// Blunders on every move, for tests that need the worst case.
+const DifficultyTuning alwaysBlunder = DifficultyTuning(
+  blunderChance: 1,
+  blunderPool: 3,
+);
+
 /// The empty cells where [mark] would win by playing there.
 Set<Position> winningCells(Board board, Mark mark) => {
   for (final cell in board.emptyCells)

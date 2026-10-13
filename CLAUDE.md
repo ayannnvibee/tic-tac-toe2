@@ -47,6 +47,38 @@ FIRST MOVE
 
 * The human moves first in every round, not only the first round of a session. This is the single constant `firstPlayerOfRound` in `lib/domain/rules.dart`; change it there if the opening move should ever alternate.
 
+## Difficulty tuning
+
+All tuning numbers live in `lib/ai/difficulty_tuning.dart`. After changing one, run `flutter test test/ai/balance_test.dart test/ai/win_block_test.dart`, read the printed rates, and update this table.
+
+Medium, by board size:
+
+| Board | Blunder chance | Blunder pool | Line defence |
+| --- | --- | --- | --- |
+| 3x3 | 25% | best 5 | not used (minimax) |
+| 4x4 | 35% | best 3 | 0.05 |
+| 5x5 | 20% | best 4 | 0 |
+| 6x6 | 20% | best 4 | 0.05 |
+| 7x7 and larger | 20% | best 4 | 1 |
+
+* Blunder chance: per move, the chance the computer plays a random one of its best few scored moves instead of the best one. A blunder skips the block and threat rules, so it can miss a block. It still always takes an immediate win.
+* Blunder pool: how many of the best scored moves a blunder chooses between.
+* Line defence: how eagerly the computer spoils the human's lines before they become an immediate threat (0 never, 1 always). On 4x4 to 6x6 every line is about as long as the win length, so one computer mark kills a line for good. With line defence at 1 the simulated human won 0% of games on 5x5 at any blunder chance, so it is turned down there. Immediate threats are still blocked unless the move is a blunder.
+* Hard never blunders and always uses line defence 1. Easy wins and blocks, otherwise plays a random nearby cell.
+
+Measured on medium (200 seeded games per size, the simulated human moves first and plays the hard engine with no blunders):
+
+| Board | Human wins | Draws | Computer wins | Immediate threats blocked |
+| --- | --- | --- | --- | --- |
+| 3x3 | 38.5% | 61.5% | 0% | not measured |
+| 4x4 | 22.0% | 78.0% | 0% | 78.5% |
+| 5x5 | 27.0% | 73.0% | 0% | 86.3% |
+| 6x6 | 28.0% | 72.0% | 0% | 85.2% |
+| 7x7 | 26.5% | 73.5% | 0% | 86.3% |
+| 8x8 | 51.5% | 48.5% | 0% | not measured |
+
+The tests assert at least 30% human wins on 3x3, at least 15% on 4x4, 5x5 and 6x6, and at least 70% of immediate threats blocked on 4x4 and larger.
+
 ARCHITECTURE RULES
 
 * domain/ and ai/ are pure Dart with no Flutter imports, fully unit tested.

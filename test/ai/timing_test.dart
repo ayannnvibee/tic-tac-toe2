@@ -90,6 +90,6 @@ void main() {
   });
 
   test('the default time budget leaves room under the ceiling', () {
-    expect(HeuristicAi.defaultTimeBudget, lessThan(_budget));
+    expect(aiTimeBudget, lessThan(_budget));
   });
 }
