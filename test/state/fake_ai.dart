@@ -41,16 +41,47 @@ class FakeAi {
   void release(int index, Position move) => _held[index].complete(move);
 }
 
+/// Records the effects it is asked to play instead of playing them.
+class FakeAudio implements AudioService {
+  final List<SoundEffect> played = [];
+  int preloads = 0;
+  bool disposed = false;
+
+  @override
+  Future<void> preload() async => preloads++;
+
+  @override
+  void play(SoundEffect effect) => played.add(effect);
+
+  @override
+  Future<void> dispose() async => disposed = true;
+}
+
+/// Records haptics instead of buzzing.
+class FakeHaptics implements HapticsService {
+  final List<String> events = [];
+
+  @override
+  void selectionClick() => events.add('selectionClick');
+
+  @override
+  void mediumImpact() => events.add('mediumImpact');
+}
+
 ProviderContainer createContainer(
   FakeAi ai, {
   Duration delay = Duration.zero,
   int seed = 1,
+  FakeAudio? audio,
+  FakeHaptics? haptics,
 }) {
   final container = ProviderContainer.test(
     overrides: [
       aiMoveFunctionProvider.overrideWithValue(ai.call),
       aiMoveDelayProvider.overrideWithValue(delay),
       aiSeedRandomProvider.overrideWithValue(Random(seed)),
+      audioServiceProvider.overrideWithValue(audio ?? FakeAudio()),
+      hapticsServiceProvider.overrideWithValue(haptics ?? FakeHaptics()),
     ],
   );
   // Keep the game alive for the whole test, as the UI will.

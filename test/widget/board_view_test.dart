@@ -61,11 +61,12 @@ void main() {
         closeTo(area.bottom - last.bottom, 0.01),
         reason: 'size $size is centred vertically',
       );
-      expect(find.byKey(const ValueKey('board-scroll-vertical')), findsNothing);
+      expect(boardViewer, findsNothing);
+      expect(zoomControls, findsNothing);
     }
   });
 
-  testWidgets('a board too big to fit keeps 44dp cells and scrolls', (
+  testWidgets('a board too big to fit keeps 44dp cells and can be panned', (
     tester,
   ) async {
     await _pumpBoard(tester, Board.empty(10));
@@ -74,23 +75,13 @@ void main() {
     final box = tester.getSize(cell(0, 0));
     expect(box.width, BoardView.minCellSize);
     expect(box.height, BoardView.minCellSize);
-    expect(find.byKey(const ValueKey('board-scroll-vertical')), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('board-scroll-horizontal')),
-      findsOneWidget,
-    );
+    expect(boardViewer, findsOneWidget);
+    expect(zoomControls, findsOneWidget);
 
-    // The far corner is reachable by scrolling both ways.
-    await tester.drag(
-      find.byKey(const ValueKey('board-scroll-horizontal')),
-      const Offset(-600, 0),
-    );
-    await tester.drag(
-      find.byKey(const ValueKey('board-scroll-vertical')),
-      const Offset(0, -600),
-    );
+    // The far corner is reachable by dragging.
+    await tester.drag(boardViewer, const Offset(-600, -600));
     await tester.pumpAndSettle();
-    final area = tester.getRect(find.byType(BoardView));
+    final area = tester.getRect(boardViewer);
     expect(area.contains(tester.getCenter(cell(9, 9))), isTrue);
   });
 

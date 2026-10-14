@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../ai/ai.dart';
 import '../domain/domain.dart';
+import 'feedback.dart';
 import 'game_state.dart';
 
 /// Computes the computer's move for a request.
@@ -46,6 +47,8 @@ class GameController extends Notifier<GameState> {
   GameState build() {
     _seedRandom = ref.watch(aiSeedRandomProvider);
     ref.onDispose(() => _generation++);
+    // Load the sounds now so the first tap is not delayed by it.
+    unawaited(ref.watch(audioServiceProvider).preload());
 
     final initial = GameState.initial();
     _startComputerIfItOpens(initial);
@@ -70,6 +73,7 @@ class GameController extends Notifier<GameState> {
     if (result is! MoveAccepted) return;
 
     _showRound(result.state);
+    _giveFeedback(result.state, byHuman: true);
     if (!result.state.isOver) await _runAiTurn();
   }
 
@@ -85,6 +89,7 @@ class GameController extends Notifier<GameState> {
       session: state.session.nextRoundAfter(result),
       isAiThinking: false,
       pendingResult: null,
+      roundId: state.roundId + 1,
     );
     _startComputerIfItOpens(state);
   }
@@ -97,6 +102,7 @@ class GameController extends Notifier<GameState> {
       session: state.session.newGame(),
       isAiThinking: false,
       pendingResult: null,
+      roundId: state.roundId + 1,
     );
     _startComputerIfItOpens(state);
   }
@@ -163,7 +169,29 @@ class GameController extends Notifier<GameState> {
       // move so the game cannot get stuck on the computer's turn.
       result = round.applyMove(round.board.emptyCells.first);
     }
-    if (result is MoveAccepted) _showRound(result.state);
+    if (result is MoveAccepted) {
+      _showRound(result.state);
+      _giveFeedback(result.state, byHuman: false);
+    }
+  }
+
+  /// Sound and haptics for a move that has just been shown, each only when
+  /// its switch is on. [round] is the round after the move.
+  void _giveFeedback(RoundState round, {required bool byHuman}) {
+    if (state.hapticsEnabled) {
+      final haptics = ref.read(hapticsServiceProvider);
+      if (byHuman) haptics.selectionClick();
+      if (round.isOver) haptics.mediumImpact();
+    }
+    if (state.soundEnabled) {
+      final audio = ref.read(audioServiceProvider);
+      audio.play(switch (round.status) {
+        RoundStatus.inProgress => SoundEffect.place,
+        RoundStatus.humanWon => SoundEffect.win,
+        RoundStatus.computerWon => SoundEffect.lose,
+        RoundStatus.draw => SoundEffect.draw,
+      });
+    }
   }
 
   /// A seed that has not been used before in this controller's lifetime.

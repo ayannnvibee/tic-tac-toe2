@@ -442,7 +442,11 @@ void main() {
   group('with the real engine', () {
     test('the default AI runs in an isolate and replies legally', () async {
       final real = ProviderContainer.test(
-        overrides: [aiMoveDelayProvider.overrideWithValue(Duration.zero)],
+        overrides: [
+          aiMoveDelayProvider.overrideWithValue(Duration.zero),
+          audioServiceProvider.overrideWithValue(FakeAudio()),
+          hapticsServiceProvider.overrideWithValue(FakeHaptics()),
+        ],
       );
       real.listen(gameControllerProvider, (_, _) {});
 

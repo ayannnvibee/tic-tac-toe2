@@ -8,6 +8,7 @@ class GameState {
     required this.session,
     this.isAiThinking = false,
     this.pendingResult,
+    this.roundId = 0,
     this.difficulty = defaultDifficulty,
     this.soundEnabled = true,
     this.hapticsEnabled = true,
@@ -25,6 +26,11 @@ class GameState {
   /// The finished board stays in [session] until the next round is started.
   final RoundStatus? pendingResult;
 
+  /// Counts the rounds started in this session. It changes whenever a fresh
+  /// board replaces the one in play, which is what the board transition and
+  /// the round end sequence key on.
+  final int roundId;
+
   final Difficulty difficulty;
   final bool soundEnabled;
   final bool hapticsEnabled;
@@ -35,6 +41,7 @@ class GameState {
     Session? session,
     bool? isAiThinking,
     Object? pendingResult = _unchanged,
+    int? roundId,
     Difficulty? difficulty,
     bool? soundEnabled,
     bool? hapticsEnabled,
@@ -44,6 +51,7 @@ class GameState {
     pendingResult: identical(pendingResult, _unchanged)
         ? this.pendingResult
         : pendingResult as RoundStatus?,
+    roundId: roundId ?? this.roundId,
     difficulty: difficulty ?? this.difficulty,
     soundEnabled: soundEnabled ?? this.soundEnabled,
     hapticsEnabled: hapticsEnabled ?? this.hapticsEnabled,

@@ -6,6 +6,7 @@ Flutter game, Android first (iOS kept for later).
 
 - `flutter analyze`
 - `flutter test`
+- `dart run tool/generate_sounds.dart` regenerates the WAV effects in `assets/sounds/` (synthesized tones, nothing licensed).
 
 ## Folder layout
 
