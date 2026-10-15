@@ -51,11 +51,7 @@ void main() {
     ) async {
       final ai = await pumpApp(tester, boardSize: 4);
       await tester.openGame();
-      await tester.playRound(
-        ai,
-        const [Position(0, 0), Position(0, 1), Position(1, 3), Position(2, 0)],
-        const [Position(3, 0), Position(3, 1), Position(3, 2), Position(3, 3)],
-      );
+      await tester.playRound(ai, computerWin4x4Taps, computerWin4x4Replies);
 
       expect(textOf(tester, 'result-title'), 'COMPUTER WINS!');
       expect(textOf(tester, 'result-subtitle'), 'Try 4 × 4 again');
@@ -344,11 +340,7 @@ void main() {
       expect(announcements, ['You Win. Next level: 4 × 4']);
 
       await tester.continueFromResult();
-      await tester.playRound(
-        ai,
-        const [Position(0, 0), Position(0, 1), Position(1, 3), Position(2, 0)],
-        const [Position(3, 0), Position(3, 1), Position(3, 2), Position(3, 3)],
-      );
+      await tester.playRound(ai, computerWin4x4Taps, computerWin4x4Replies);
       expect(announcements.last, 'Computer Wins. Try 4 × 4 again');
 
       await tester.continueFromResult();
@@ -385,21 +377,7 @@ void main() {
           await tester.continueFromResult();
           expect(textOf(tester, 'board-size'), '4 × 4');
 
-          await tester.playRound(
-            ai,
-            const [
-              Position(0, 0),
-              Position(0, 1),
-              Position(1, 3),
-              Position(2, 0),
-            ],
-            const [
-              Position(3, 0),
-              Position(3, 1),
-              Position(3, 2),
-              Position(3, 3),
-            ],
-          );
+          await tester.playRound(ai, computerWin4x4Taps, computerWin4x4Replies);
           expect(tester.takeException(), isNull);
           await tester.continueFromResult();
 

@@ -13,10 +13,10 @@ void main() {
   });
 
   group('winLengthFor', () {
-    test('is min(size, 5)', () {
+    test('is 3 up to 4x4, 4 on 5x5 and 5 from 6x6', () {
       expect(winLengthFor(3), 3);
-      expect(winLengthFor(4), 4);
-      expect(winLengthFor(5), 5);
+      expect(winLengthFor(4), 3);
+      expect(winLengthFor(5), 4);
       expect(winLengthFor(6), 5);
       expect(winLengthFor(12), 5);
     });

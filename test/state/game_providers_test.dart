@@ -26,7 +26,7 @@ void main() {
 
     container.controller.continueToNextRound();
     expect(container.read(boardSizeProvider), 4);
-    expect(container.read(winLengthProvider), 4);
+    expect(container.read(winLengthProvider), 3);
     expect(container.read(scoreProvider), (humanWins: 1, computerWins: 0));
 
     container.controller.newGame();
@@ -37,9 +37,10 @@ void main() {
   test('win length stops at 5 on large boards', () async {
     for (var size = 3; size < 7; size++) {
       // Win the top row of whatever board is in play.
-      final taps = [for (var col = 0; col < size; col++) Position(0, col)];
+      final length = winLengthFor(size);
+      final taps = [for (var col = 0; col < length; col++) Position(0, col)];
       ai.script.addAll([
-        for (var col = 0; col < size - 1; col++) Position(size - 1, col),
+        for (var col = 0; col < length - 1; col++) Position(size - 1, col),
       ]);
       await container.tapAll(taps);
       expect(container.game.pendingResult, RoundStatus.humanWon);

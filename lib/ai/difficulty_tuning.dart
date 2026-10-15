@@ -25,10 +25,9 @@ class DifficultyTuning {
   /// How eagerly the computer spoils the human's lines before they become an
   /// immediate threat, from 0 (never) to 1 (always). Larger boards only.
   ///
-  /// On small boards every line is exactly the win length, so one computer
-  /// mark kills it for good. At 1 the computer kills every line early and the
-  /// human cannot win however often it blunders; lower values let the human
-  /// build a real threat, which the computer then blocks unless it blunders.
+  /// At 1 the computer spoils lines early, which on 6x6 and larger draws
+  /// almost every game; lower values let the human build a real threat,
+  /// which the computer then blocks unless it blunders.
   final double lineDefence;
 }
 
@@ -38,15 +37,19 @@ const DifficultyTuning noBlunders = DifficultyTuning();
 /// Medium, by board size. Sizes not listed use [mediumLargeBoardTuning].
 const Map<int, DifficultyTuning> mediumTuningBySize = {
   3: DifficultyTuning(blunderChance: 0.25, blunderPool: 5),
-  4: DifficultyTuning(blunderChance: 0.35, blunderPool: 3, lineDefence: 0.05),
-  5: DifficultyTuning(blunderChance: 0.20, blunderPool: 4, lineDefence: 0),
-  6: DifficultyTuning(blunderChance: 0.20, blunderPool: 4, lineDefence: 0.05),
+  // 3 in a row on 4x4 and 4 in a row on 5x5 favour the first player, so the
+  // computer plays close to its best there and the human still wins most.
+  4: DifficultyTuning(blunderChance: 0.10, blunderPool: 3),
+  5: DifficultyTuning(blunderChance: 0.10, blunderPool: 3),
+  6: DifficultyTuning(blunderChance: 0.35, blunderPool: 3, lineDefence: 0.05),
 };
 
-/// Medium on 7x7 and larger, where there is room to win without help.
+/// Medium on 7x7 and larger. Full line defence there drew almost every game,
+/// so it is turned down like on 6x6.
 const DifficultyTuning mediumLargeBoardTuning = DifficultyTuning(
   blunderChance: 0.20,
   blunderPool: 4,
+  lineDefence: 0.05,
 );
 
 /// The tuning for [difficulty] on a board of [boardSize].

@@ -109,7 +109,7 @@ void main() {
     expectFreshRound(session, 4);
     expect((session.humanWins, session.computerWins), (1, 0));
 
-    // Computer takes the bottom row on 4x4.
+    // Computer takes three of the bottom row on 4x4.
     session = session.withRound(
       play(session.round, const [
         Position(0, 0),
@@ -118,8 +118,6 @@ void main() {
         Position(3, 1),
         Position(1, 3),
         Position(3, 2),
-        Position(2, 0),
-        Position(3, 3),
       ]),
     );
     expect(session.round.status, RoundStatus.computerWon);

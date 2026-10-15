@@ -185,17 +185,35 @@ void main() {
       ]);
     });
 
-    test('three in a row does not end a 4x4 round', () {
+    test('three in a row wins on 4x4 without filling the row', () {
       final round = play(RoundState.initial(4), const [
-        Position(0, 0),
+        Position(1, 1),
         Position(3, 0),
+        Position(1, 2),
+        Position(0, 0),
+      ]);
+      expect(round.status, RoundStatus.inProgress);
+
+      final won = play(round, const [Position(1, 3)]);
+      expect(won.status, RoundStatus.humanWon);
+      expect(won.winningLine, const [
+        Position(1, 1),
+        Position(1, 2),
+        Position(1, 3),
+      ]);
+    });
+
+    test('three in a row does not end a 5x5 round, four does', () {
+      final round = play(RoundState.initial(5), const [
+        Position(0, 0),
+        Position(4, 0),
         Position(0, 1),
-        Position(3, 1),
+        Position(4, 1),
         Position(0, 2),
       ]);
       expect(round.status, RoundStatus.inProgress);
 
-      final won = play(round, const [Position(3, 2), Position(0, 3)]);
+      final won = play(round, const [Position(4, 4), Position(0, 3)]);
       expect(won.status, RoundStatus.humanWon);
       expect(won.winningLine, hasLength(4));
     });

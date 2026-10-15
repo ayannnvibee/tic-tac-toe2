@@ -7,19 +7,33 @@ import 'package:tic_tac_toe_infinity/domain/domain.dart';
 const _gamesPerSize = 200;
 
 /// The lowest share of games the simulated human must win, by board size.
-/// Sizes without an entry are only measured and printed.
-const _minHumanWinRate = <int, double>{3: 0.30, 4: 0.15, 5: 0.15, 6: 0.15};
+const _minHumanWinRate = <int, double>{
+  3: 0.30,
+  4: 0.30,
+  5: 0.30,
+  6: 0.25,
+  7: 0.25,
+  8: 0.25,
+};
+
+/// A player who sees the board well but slips now and then: on 4x4 and
+/// larger the first player can force a win, so a flawless simulated human
+/// would win every game whatever the computer does.
+const _realisticHuman = DifficultyTuning(
+  blunderChance: 0.3,
+  blunderPool: 4,
+  lineDefence: 0.5,
+);
 
 /// One round of the simulated human against medium.
 ///
-/// The human plays X, moves first, and uses the same engines as the computer
-/// with no blunders: perfect play on 3x3 and the full heuristic above that.
+/// The human plays X and moves first. On 3x3 it plays perfectly; on larger
+/// boards it uses the heuristic engine with [_realisticHuman] mistakes.
 RoundStatus _playRound(int size, int seed) {
   final computer = GameAi(random: Random(seed));
-  final human = GameAi(
-    difficulty: Difficulty.hard,
-    random: Random(seed + 100000),
-  );
+  final human = size == 3
+      ? GameAi(difficulty: Difficulty.hard, random: Random(seed + 100000))
+      : GameAi(random: Random(seed + 100000), tuning: _realisticHuman);
 
   var round = RoundState.initial(size);
   while (!round.isOver) {

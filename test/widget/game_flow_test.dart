@@ -151,7 +151,7 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('result-continue')));
       await tester.pumpAndSettle();
       expect(textOf(tester, 'board-size'), '4 × 4');
-      expect(textOf(tester, 'win-length'), 'Get 4 in a row');
+      expect(textOf(tester, 'win-length'), 'Get 3 in a row');
       expect(textOf(tester, 'score-human'), '1');
       expect(allCells, findsNWidgets(16));
 
@@ -181,7 +181,7 @@ void main() {
       await tester.tap(find.byTooltip('Back to home'));
       await tester.pumpAndSettle();
       expect(find.byType(HomeScreen), findsOneWidget);
-      expect(find.text('4×4 Board • Get 4 in a row'), findsOneWidget);
+      expect(find.text('4×4 Board • Get 3 in a row'), findsOneWidget);
 
       await tester.openGame();
       expect(textOf(tester, 'board-size'), '4 × 4');
@@ -248,7 +248,7 @@ void main() {
       await tester.tap(find.text('NEXT LEVEL'));
       await tester.pumpAndSettle();
 
-      // XXOO / OOXX / XXOO / OOXX has no four in a row.
+      // XXOO / OOXX / XXOO / OOXX has no three in a row.
       await tester.playRound(
         ai,
         const [

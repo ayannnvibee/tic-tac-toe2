@@ -117,14 +117,14 @@ void main() {
 
   test('prefers its own win over blocking', () {
     final board = Board.fromCells(4, const [
-      Mark.x, Mark.x, Mark.x, Mark.empty, //
-      Mark.o, Mark.o, Mark.o, Mark.empty,
+      Mark.x, Mark.x, Mark.empty, Mark.empty, //
+      Mark.o, Mark.o, Mark.empty, Mark.empty,
       Mark.empty, Mark.empty, Mark.empty, Mark.empty,
       Mark.empty, Mark.empty, Mark.empty, Mark.empty,
     ]);
     for (final difficulty in Difficulty.values) {
       final ai = GameAi(difficulty: difficulty, random: Random(3));
-      expect(ai.chooseMove(board, aiMark, humanMark), const Position(1, 3));
+      expect(ai.chooseMove(board, aiMark, humanMark), const Position(1, 2));
     }
   });
 

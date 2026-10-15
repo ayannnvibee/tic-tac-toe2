@@ -124,7 +124,7 @@ extension AppActions on WidgetTester {
   }
 }
 
-/// A full 4x4 board with no four in a row: XXOO / OOXX / XXOO / OOXX.
+/// A full 4x4 board with no three in a row: XXOO / OOXX / XXOO / OOXX.
 const draw4x4Taps = [
   Position(0, 0),
   Position(0, 1),
@@ -145,3 +145,7 @@ const draw4x4Replies = [
   Position(3, 0),
   Position(3, 1),
 ];
+
+/// Human moves on 4x4 that let the computer take three of the bottom row.
+const computerWin4x4Taps = [Position(0, 0), Position(0, 1), Position(1, 3)];
+const computerWin4x4Replies = [Position(3, 0), Position(3, 1), Position(3, 2)];

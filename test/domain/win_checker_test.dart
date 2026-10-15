@@ -173,8 +173,8 @@ void main() {
     });
 
     test('anti-diagonal run that wraps around the left edge', () {
-      // Flat indices 0, 3, 6, 9 step by size - 1 on a 4x4 board.
-      expectNoWin(boardFrom(['X..X', '..X.', '.X..', '....']));
+      // Flat indices 4, 7, 10 step by size - 1 on a 4x4 board.
+      expectNoWin(boardFrom(['....', 'X..X', '..X.', '....']));
       // Flat indices 1, 3, 5 step by size - 1 on a 3x3 board.
       expectNoWin(boardFrom(['.X.', 'X.X', '...']));
     });

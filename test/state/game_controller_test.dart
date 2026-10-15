@@ -280,7 +280,7 @@ void main() {
       expect(container.game.session.boardSize, 4);
       expect(container.game.session.humanWins, 1);
 
-      // XXOO / OOXX / XXOO / OOXX has no four in a row.
+      // XXOO / OOXX / XXOO / OOXX has no three in a row.
       ai.script.addAll(const [
         Position(0, 2),
         Position(0, 3),
