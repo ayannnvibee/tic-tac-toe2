@@ -39,13 +39,15 @@ class SizedGameController extends GameController {
 }
 
 /// Pumps the whole app with a scripted computer, no move delay and fake
-/// sound and haptics.
+/// sound, haptics, music and ads.
 Future<FakeAi> pumpApp(
   WidgetTester tester, {
   Size size = phoneSize,
   ThemeMode themeMode = ThemeMode.light,
   FakeAudio? audio,
   FakeHaptics? haptics,
+  FakeAds? ads,
+  FakeMusic? music,
   int? boardSize,
 }) async {
   tester.view.devicePixelRatio = 1;
@@ -61,6 +63,8 @@ Future<FakeAi> pumpApp(
         aiSeedRandomProvider.overrideWithValue(Random(1)),
         audioServiceProvider.overrideWithValue(audio ?? FakeAudio()),
         hapticsServiceProvider.overrideWithValue(haptics ?? FakeHaptics()),
+        adServiceProvider.overrideWithValue(ads ?? FakeAds()),
+        musicServiceProvider.overrideWithValue(music ?? FakeMusic()),
         if (boardSize != null)
           gameControllerProvider.overrideWith(
             () => SizedGameController(boardSize),

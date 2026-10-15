@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tic_tac_toe_infinity/ai/ai.dart';
@@ -68,12 +69,72 @@ class FakeHaptics implements HapticsService {
   void mediumImpact() => events.add('mediumImpact');
 }
 
+/// Stands in for the ads SDK. By default an interstitial is always loaded
+/// and no rewarded ad is, so the result card shows only its normal button.
+class FakeAds implements AdService {
+  FakeAds({bool rewardedLoaded = false, this.interstitialLoaded = true})
+    : rewardedReady = ValueNotifier(rewardedLoaded);
+
+  @override
+  final ValueNotifier<bool> rewardedReady;
+
+  /// Whether an interstitial is ready; false behaves like being offline.
+  bool interstitialLoaded;
+
+  /// Whether watching the rewarded ad earns the reward, or it is closed early.
+  bool earnReward = true;
+
+  int initializeCalls = 0;
+  int interstitialsShown = 0;
+  int rewardedShown = 0;
+
+  @override
+  Future<void> initialize() async => initializeCalls++;
+
+  /// When set, an interstitial stays open until this completes.
+  Completer<void>? holdInterstitial;
+
+  @override
+  Future<void> showInterstitial() async {
+    if (!interstitialLoaded) return;
+    interstitialsShown++;
+    await holdInterstitial?.future;
+  }
+
+  @override
+  Future<bool> showRewarded() async {
+    if (!rewardedReady.value) return false;
+    rewardedShown++;
+    return earnReward;
+  }
+
+  @override
+  void dispose() {}
+}
+
+/// Records what the music is told to do instead of playing it.
+class FakeMusic implements MusicService {
+  final List<String> events = [];
+
+  bool get playing => events.isNotEmpty && events.last == 'play';
+
+  @override
+  void play() => events.add('play');
+
+  @override
+  void pause() => events.add('pause');
+
+  @override
+  Future<void> dispose() async {}
+}
+
 ProviderContainer createContainer(
   FakeAi ai, {
   Duration delay = Duration.zero,
   int seed = 1,
   FakeAudio? audio,
   FakeHaptics? haptics,
+  FakeAds? ads,
 }) {
   final container = ProviderContainer.test(
     overrides: [
@@ -82,6 +143,8 @@ ProviderContainer createContainer(
       aiSeedRandomProvider.overrideWithValue(Random(seed)),
       audioServiceProvider.overrideWithValue(audio ?? FakeAudio()),
       hapticsServiceProvider.overrideWithValue(haptics ?? FakeHaptics()),
+      adServiceProvider.overrideWithValue(ads ?? FakeAds()),
+      musicServiceProvider.overrideWithValue(FakeMusic()),
     ],
   );
   // Keep the game alive for the whole test, as the UI will.

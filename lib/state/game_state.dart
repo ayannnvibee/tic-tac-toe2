@@ -12,6 +12,8 @@ class GameState {
     this.difficulty = defaultDifficulty,
     this.soundEnabled = true,
     this.hapticsEnabled = true,
+    this.musicEnabled = true,
+    this.isShowingAd = false,
   });
 
   /// A 3x3 board, 0/0, human to move.
@@ -34,6 +36,11 @@ class GameState {
   final Difficulty difficulty;
   final bool soundEnabled;
   final bool hapticsEnabled;
+  final bool musicEnabled;
+
+  /// True while a full-screen ad is up. Music pauses and the result card
+  /// ignores its buttons until the ad is closed.
+  final bool isShowingAd;
 
   static const Object _unchanged = Object();
 
@@ -45,6 +52,8 @@ class GameState {
     Difficulty? difficulty,
     bool? soundEnabled,
     bool? hapticsEnabled,
+    bool? musicEnabled,
+    bool? isShowingAd,
   }) => GameState(
     session: session ?? this.session,
     isAiThinking: isAiThinking ?? this.isAiThinking,
@@ -55,5 +64,7 @@ class GameState {
     difficulty: difficulty ?? this.difficulty,
     soundEnabled: soundEnabled ?? this.soundEnabled,
     hapticsEnabled: hapticsEnabled ?? this.hapticsEnabled,
+    musicEnabled: musicEnabled ?? this.musicEnabled,
+    isShowingAd: isShowingAd ?? this.isShowingAd,
   );
 }

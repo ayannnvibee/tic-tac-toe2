@@ -14,7 +14,9 @@ import '../widgets/tactile.dart';
 ///
 /// When a round ends a stroke is drawn across the winning cells, and then the
 /// result card appears over the finished board. All game behaviour lives in
-/// [GameController]; this screen only owns those two animations.
+/// [GameController]; this screen only owns those two animations and the
+/// background music, which plays only while this screen is open, the app is
+/// in the foreground, music is switched on and no ad is showing.
 class GameScreen extends ConsumerStatefulWidget {
   const GameScreen({super.key});
 
@@ -45,6 +47,10 @@ class _GameScreenState extends ConsumerState<GameScreen>
   /// for a moment after the round has ended.
   bool _cardVisible = false;
 
+  late final MusicService _music = ref.read(musicServiceProvider);
+  late final AppLifecycleListener _lifecycle;
+  bool _musicPlaying = false;
+
   @override
   void initState() {
     super.initState();
@@ -53,12 +59,32 @@ class _GameScreenState extends ConsumerState<GameScreen>
       _winLine.value = 1;
       _cardVisible = true;
     }
+    _lifecycle = AppLifecycleListener(onStateChange: (_) => _syncMusic());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _syncMusic());
   }
 
   @override
   void dispose() {
+    _lifecycle.dispose();
+    if (_musicPlaying) _music.pause();
     _winLine.dispose();
     super.dispose();
+  }
+
+  void _syncMusic() {
+    if (!mounted) return;
+    final state = ref.read(gameControllerProvider);
+    final foreground =
+        WidgetsBinding.instance.lifecycleState == null ||
+        WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
+    final shouldPlay = state.musicEnabled && !state.isShowingAd && foreground;
+    if (shouldPlay == _musicPlaying) return;
+    _musicPlaying = shouldPlay;
+    if (shouldPlay) {
+      _music.play();
+    } else {
+      _music.pause();
+    }
   }
 
   void _onResultChanged(RoundStatus? previous, RoundStatus? next) {
@@ -106,6 +132,12 @@ class _GameScreenState extends ConsumerState<GameScreen>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<(bool, bool)>(
+      gameControllerProvider.select(
+        (state) => (state.musicEnabled, state.isShowingAd),
+      ),
+      (_, _) => _syncMusic(),
+    );
     ref.listen<RoundStatus?>(
       gameControllerProvider.select((state) => state.pendingResult),
       _onResultChanged,
@@ -156,8 +188,10 @@ class _GameScreenState extends ConsumerState<GameScreen>
                         boardSize: boardSize,
                         winLength: winLength,
                         soundEnabled: state.soundEnabled,
+                        musicEnabled: state.musicEnabled,
                         onBack: () => Navigator.of(context).maybePop(),
                         onToggleSound: controller.toggleSound,
+                        onToggleMusic: controller.toggleMusic,
                       ),
                     ),
                     narrow(
@@ -226,10 +260,20 @@ class _GameScreenState extends ConsumerState<GameScreen>
           ),
           if (result != null && _cardVisible)
             Positioned.fill(
-              child: ResultOverlay(
-                result: result,
-                boardSize: boardSize,
-                onContinue: controller.continueToNextRound,
+              child: ValueListenableBuilder<bool>(
+                valueListenable: ref.watch(adServiceProvider).rewardedReady,
+                builder: (context, rewardedReady, _) => ResultOverlay(
+                  result: result,
+                  boardSize: boardSize,
+                  onContinue: controller.continueToNextRound,
+                  // Offered only when an ad is ready to play right now.
+                  onWatchAd:
+                      rewardedReady &&
+                          !state.isShowingAd &&
+                          GameController.canContinueWithAd(result)
+                      ? controller.watchAdToContinue
+                      : null,
+                ),
               ),
             ),
         ],
@@ -243,15 +287,19 @@ class _Header extends StatelessWidget {
     required this.boardSize,
     required this.winLength,
     required this.soundEnabled,
+    required this.musicEnabled,
     required this.onBack,
     required this.onToggleSound,
+    required this.onToggleMusic,
   });
 
   final int boardSize;
   final int winLength;
   final bool soundEnabled;
+  final bool musicEnabled;
   final VoidCallback onBack;
   final VoidCallback onToggleSound;
+  final VoidCallback onToggleMusic;
 
   @override
   Widget build(BuildContext context) {
@@ -296,6 +344,14 @@ class _Header extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
+            RoundIconButton(
+              key: const ValueKey('game-music-toggle'),
+              icon: musicEnabled ? Icons.music_note : Icons.music_off,
+              tooltip: musicEnabled ? 'Turn music off' : 'Turn music on',
+              iconColor: musicEnabled ? scheme.primary : scheme.outline,
+              onPressed: onToggleMusic,
+            ),
+            const SizedBox(width: AppSpacing.xs),
             RoundIconButton(
               key: const ValueKey('game-sound-toggle'),
               icon: soundEnabled ? Icons.volume_up : Icons.volume_off,

@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../ai/ai.dart';
 import '../domain/domain.dart';
+import 'ad_config.dart';
+import 'ad_service.dart';
 import 'feedback.dart';
 import 'game_state.dart';
 
@@ -43,12 +45,21 @@ class GameController extends Notifier<GameState> {
   /// requested for an earlier round can be recognised and dropped.
   int _generation = 0;
 
+  /// Rounds finished since the last full-screen ad.
+  int _finishedRounds = 0;
+
+  /// The round as it was just before the human's latest move. A rewarded
+  /// second chance after a loss goes back to it.
+  RoundState? _beforeHumanMove;
+
   @override
   GameState build() {
     _seedRandom = ref.watch(aiSeedRandomProvider);
     ref.onDispose(() => _generation++);
     // Load the sounds now so the first tap is not delayed by it.
     unawaited(ref.watch(audioServiceProvider).preload());
+    // Ads load in the background; the game never waits for them.
+    unawaited(ref.watch(adServiceProvider).initialize());
 
     final initial = GameState.initial();
     _startComputerIfItOpens(initial);
@@ -72,6 +83,7 @@ class GameController extends Notifier<GameState> {
     final result = round.applyMove(position);
     if (result is! MoveAccepted) return;
 
+    _beforeHumanMove = round;
     _showRound(result.state);
     _giveFeedback(result.state, byHuman: true);
     if (!result.state.isOver) await _runAiTurn();
@@ -80,11 +92,27 @@ class GameController extends Notifier<GameState> {
   /// Starts the round that follows the finished one: a bigger board after a
   /// human win, the same size after a computer win, a full reset after a
   /// draw. Does nothing while a round is still being played.
-  void continueToNextRound() {
+  ///
+  /// Every [AdConfig.roundsPerInterstitial] finished rounds an interstitial is
+  /// shown first; the next round starts once it is closed, or at once when no
+  /// ad is loaded.
+  Future<void> continueToNextRound() async {
     final result = state.pendingResult;
-    if (result == null) return;
+    if (result == null || state.isShowingAd) return;
+
+    if (_finishedRounds >= AdConfig.roundsPerInterstitial) {
+      _finishedRounds = 0;
+      final roundId = state.roundId;
+      state = state.copyWith(isShowingAd: true);
+      await ref.read(adServiceProvider).showInterstitial();
+      if (!ref.mounted) return;
+      state = state.copyWith(isShowingAd: false);
+      // New Game may have replaced the round while the ad was up.
+      if (state.roundId != roundId || state.pendingResult != result) return;
+    }
 
     _generation++;
+    _beforeHumanMove = null;
     state = state.copyWith(
       session: state.session.nextRoundAfter(result),
       isAiThinking: false,
@@ -98,6 +126,7 @@ class GameController extends Notifier<GameState> {
   /// Difficulty, sound and haptics are kept.
   void newGame() {
     _generation++;
+    _beforeHumanMove = null;
     state = state.copyWith(
       session: state.session.newGame(),
       isAiThinking: false,
@@ -113,11 +142,61 @@ class GameController extends Notifier<GameState> {
   void toggleSound() =>
       state = state.copyWith(soundEnabled: !state.soundEnabled);
 
+  void toggleMusic() =>
+      state = state.copyWith(musicEnabled: !state.musicEnabled);
+
+  /// Whether a rewarded ad can rescue a round that ended with [result]: a
+  /// loss is undone, a draw keeps the level instead of resetting to 3x3.
+  static bool canContinueWithAd(RoundStatus? result) =>
+      result == RoundStatus.computerWon || result == RoundStatus.draw;
+
+  /// Shows a rewarded ad for the finished round. If the player earns the
+  /// reward, a loss is taken back to just before their last move and the
+  /// same round goes on; a draw starts a fresh board of the same size with
+  /// both scores kept. Without the reward nothing changes and the result card
+  /// stays up. Watching resets the interstitial count, so two ads never run
+  /// back to back.
+  Future<void> watchAdToContinue() async {
+    final result = state.pendingResult;
+    if (!canContinueWithAd(result) || state.isShowingAd) return;
+
+    final roundId = state.roundId;
+    state = state.copyWith(isShowingAd: true);
+    final earned = await ref.read(adServiceProvider).showRewarded();
+    if (!ref.mounted) return;
+    state = state.copyWith(isShowingAd: false);
+    if (!earned || state.roundId != roundId || state.pendingResult != result) {
+      return;
+    }
+
+    _finishedRounds = 0;
+    if (result == RoundStatus.computerWon) {
+      final before = _beforeHumanMove;
+      if (before == null) return;
+      _generation++;
+      state = state.copyWith(
+        session: state.session.withRound(before),
+        isAiThinking: false,
+        pendingResult: null,
+      );
+    } else {
+      _generation++;
+      _beforeHumanMove = null;
+      state = state.copyWith(
+        session: state.session.replaySameSize(),
+        isAiThinking: false,
+        pendingResult: null,
+        roundId: state.roundId + 1,
+      );
+    }
+  }
+
   void toggleHaptics() =>
       state = state.copyWith(hapticsEnabled: !state.hapticsEnabled);
 
   /// Shows [round] on the board, and its result if it has just ended.
   void _showRound(RoundState round) {
+    if (round.isOver) _finishedRounds++;
     state = state.copyWith(
       session: state.session.withRound(round),
       isAiThinking: false,

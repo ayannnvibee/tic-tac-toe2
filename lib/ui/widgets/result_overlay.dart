@@ -18,6 +18,7 @@ class ResultOverlay extends StatelessWidget {
     required this.result,
     required this.boardSize,
     required this.onContinue,
+    this.onWatchAd,
   });
 
   /// How the round ended; never [RoundStatus.inProgress].
@@ -27,6 +28,13 @@ class ResultOverlay extends StatelessWidget {
   final int boardSize;
 
   final VoidCallback onContinue;
+
+  /// Offers a rewarded ad under the main button when set: after a loss it
+  /// undoes the losing moves, after a draw it keeps the level.
+  final VoidCallback? onWatchAd;
+
+  static const String secondChanceLabel = 'Watch ad: second chance';
+  static const String keepLevelLabel = 'Watch ad: keep your level';
 
   static const String nextLevelLabel = 'NEXT LEVEL';
   static const String retryLevelLabel = 'RETRY LEVEL';
@@ -65,22 +73,28 @@ class ResultOverlay extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.md),
-        child: switch (result) {
-          RoundStatus.humanWon => _HumanWin(
-            boardSize: boardSize,
-            subtitle: subtitle,
-            onContinue: onContinue,
-          ),
-          RoundStatus.computerWon => _ComputerWin(
-            boardSize: boardSize,
-            subtitle: subtitle,
-            onContinue: onContinue,
-          ),
-          RoundStatus.draw || RoundStatus.inProgress => _Draw(
-            subtitle: subtitle,
-            onContinue: onContinue,
-          ),
-        },
+        child: _WithAdButton(
+          onWatchAd: onWatchAd,
+          label: result == RoundStatus.draw
+              ? keepLevelLabel
+              : secondChanceLabel,
+          child: switch (result) {
+            RoundStatus.humanWon => _HumanWin(
+              boardSize: boardSize,
+              subtitle: subtitle,
+              onContinue: onContinue,
+            ),
+            RoundStatus.computerWon => _ComputerWin(
+              boardSize: boardSize,
+              subtitle: subtitle,
+              onContinue: onContinue,
+            ),
+            RoundStatus.draw || RoundStatus.inProgress => _Draw(
+              subtitle: subtitle,
+              onContinue: onContinue,
+            ),
+          },
+        ),
       ),
     );
 
@@ -127,6 +141,41 @@ class ResultOverlay extends StatelessWidget {
 }
 
 String _grid(int size) => '$size×$size';
+
+/// The card's content, with the rewarded ad button under it when offered.
+class _WithAdButton extends StatelessWidget {
+  const _WithAdButton({
+    required this.onWatchAd,
+    required this.label,
+    required this.child,
+  });
+
+  final VoidCallback? onWatchAd;
+  final String label;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final onWatchAd = this.onWatchAd;
+    if (onWatchAd == null) return child;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        child,
+        const SizedBox(height: AppSpacing.sm),
+        SizedBox(
+          width: double.infinity,
+          child: PillButton(
+            key: const ValueKey('result-watch-ad'),
+            label: label,
+            icon: Icons.ondemand_video,
+            onPressed: onWatchAd,
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 class _Headline extends StatelessWidget {
   const _Headline({required this.title, required this.subtitle, this.color});

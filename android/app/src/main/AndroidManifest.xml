@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Only for ads. The game itself is fully offline. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="tic_tac_toe_infinity"
         android:name="${applicationName}"
@@ -26,6 +28,11 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!-- AdMob app ID. This is Google's TEST app ID: replace it (and the
+             unit IDs in lib/state/ad_config.dart) before release. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713"/>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

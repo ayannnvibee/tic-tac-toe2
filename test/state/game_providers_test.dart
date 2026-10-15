@@ -44,7 +44,7 @@ void main() {
       ]);
       await container.tapAll(taps);
       expect(container.game.pendingResult, RoundStatus.humanWon);
-      container.controller.continueToNextRound();
+      await container.controller.continueToNextRound();
     }
 
     expect(container.read(boardSizeProvider), 7);
@@ -70,7 +70,7 @@ void main() {
       await container.tapAll(humanWinTaps);
       expect(container.read(turnLabelProvider), 'You Win');
 
-      container.controller.continueToNextRound();
+      await container.controller.continueToNextRound();
       expect(container.read(turnLabelProvider), 'Your turn');
     });
 

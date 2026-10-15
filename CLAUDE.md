@@ -7,6 +7,7 @@ Flutter game, Android first (iOS kept for later).
 - `flutter analyze`
 - `flutter test`
 - `dart run tool/generate_sounds.dart` regenerates the WAV effects in `assets/sounds/` (synthesized tones, nothing licensed).
+- `dart run tool/generate_music.dart` regenerates the background loop `assets/music/game_loop.wav` (synthesized, nothing licensed).
 
 ## Folder layout
 
@@ -42,7 +43,22 @@ PRODUCT RULES (source of truth)
 * No persistence: every app launch starts at 3x3 with 0/0. No high scores, no history, no saved level.
 * After a win or draw, further taps on the board are ignored until the next round starts. Invalid taps (occupied cell, not human's turn) are rejected.
 * AI makes exactly one legal move per turn, never out of turn, never on an occupied cell, and must not freeze the UI on large boards.
-* Offline only. No ads, no accounts, no backend, no analytics.
+* Gameplay is fully offline. No accounts, no backend, no analytics. The only network use is ads (INTERNET permission in the Android manifest).
+
+ADS (Google Mobile Ads, TEST IDs only for now)
+
+* All ad IDs live in `lib/state/ad_config.dart` and the AdMob app ID in `android/app/src/main/AndroidManifest.xml`. They are Google's public test IDs: swap in real ones from an AdMob account before release.
+* All ad calls go through `AdService` (`lib/state/ad_service.dart`); tests use `FakeAds`. Ads never block or crash the game: if an ad is not loaded (offline, error) the game just carries on, and the rewarded button is hidden.
+* INTERSTITIAL: after every 4 finished rounds (win, loss or draw all count), shown when the result card button is tapped, before the next round starts.
+* REWARDED, a second button on the result card, only after a loss or a draw and only while a rewarded ad is loaded:
+  * Loss, "Watch ad: second chance": on reward, the computer's winning move and the human's last move are undone and the same round continues. Scores unchanged.
+  * Draw, "Watch ad: keep your level": on reward, a fresh board of the SAME size with both scores kept, instead of the reset to 3x3.
+  * No reward (closed early, not loaded): nothing changes, the normal button does the normal thing.
+  * Watching a rewarded ad restarts the 4-round interstitial count, so two ads never run back to back.
+
+MUSIC
+
+* A quiet looping track plays on the Game screen only. It pauses on Home, when the app goes to the background and while an ad is showing. It has its own on/off button next to Sound, session-only like the other switches.
 
 FIRST MOVE
 

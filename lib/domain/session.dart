@@ -76,4 +76,13 @@ class Session {
 
   /// A full reset, the same as after a draw.
   Session newGame() => Session.initial();
+
+  /// A fresh board of the same size with both counters kept: what a draw
+  /// leads to when the player has watched a rewarded ad to keep their level.
+  Session replaySameSize() => Session(
+    boardSize: boardSize,
+    humanWins: humanWins,
+    computerWins: computerWins,
+    round: RoundState.initial(boardSize),
+  );
 }
