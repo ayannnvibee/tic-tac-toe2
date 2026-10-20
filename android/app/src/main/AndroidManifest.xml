@@ -2,7 +2,7 @@
     <!-- Only for ads. The game itself is fully offline. -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="tic_tac_toe_infinity"
+        android:label="Tic Tac Toe Infinity"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
