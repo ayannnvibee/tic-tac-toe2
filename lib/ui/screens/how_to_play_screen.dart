@@ -8,6 +8,7 @@ import '../theme/game_colors.dart';
 import '../widgets/mark_view.dart';
 import '../widgets/mini_grid.dart';
 import '../widgets/tactile.dart';
+import 'onboarding_screen.dart';
 
 /// The rules, and the sound and haptics switches, on two tabs.
 class HowToPlayScreen extends ConsumerStatefulWidget {
@@ -83,6 +84,15 @@ class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen> {
                           : const _ControlsPanel(),
                     ),
                   ),
+                  TextButton.icon(
+                    key: const ValueKey('show-intro'),
+                    onPressed: () =>
+                        Navigator.of(context)
+                            .pushNamed(OnboardingScreen.routeName),
+                    icon: const Icon(Icons.slideshow),
+                    label: const Text('Show intro again'),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
                   SizedBox(
                     width: double.infinity,
                     child: ChunkyButton(

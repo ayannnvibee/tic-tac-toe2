@@ -48,6 +48,8 @@ Future<FakeAi> pumpApp(
   FakeHaptics? haptics,
   FakeAds? ads,
   FakeMusic? music,
+  FakeOnboardingStore? intro,
+  bool showIntro = false,
   int? boardSize,
 }) async {
   tester.view.devicePixelRatio = 1;
@@ -65,12 +67,15 @@ Future<FakeAi> pumpApp(
         hapticsServiceProvider.overrideWithValue(haptics ?? FakeHaptics()),
         adServiceProvider.overrideWithValue(ads ?? FakeAds()),
         musicServiceProvider.overrideWithValue(music ?? FakeMusic()),
+        onboardingStoreProvider.overrideWithValue(
+          intro ?? FakeOnboardingStore(),
+        ),
         if (boardSize != null)
           gameControllerProvider.overrideWith(
             () => SizedGameController(boardSize),
           ),
       ],
-      child: TicTacToeInfinityApp(themeMode: themeMode),
+      child: TicTacToeInfinityApp(themeMode: themeMode, showIntro: showIntro),
     ),
   );
   await tester.pumpAndSettle();

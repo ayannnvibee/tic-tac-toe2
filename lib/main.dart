@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
+import 'state/state.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,5 +20,8 @@ Future<void> main() async {
     yield LicenseEntryWithLineBreaks(<String>['Nunito Sans'], license);
   });
 
-  runApp(const ProviderScope(child: TicTacToeInfinityApp()));
+  // The intro is shown once, on the very first launch.
+  final showIntro = !await const SharedPrefsOnboardingStore().hasSeenIntro();
+
+  runApp(ProviderScope(child: TicTacToeInfinityApp(showIntro: showIntro)));
 }

@@ -3,15 +3,23 @@ import 'package:flutter/material.dart';
 import 'ui/screens/game_screen.dart';
 import 'ui/screens/home_screen.dart';
 import 'ui/screens/how_to_play_screen.dart';
+import 'ui/screens/onboarding_screen.dart';
 import 'ui/theme/app_theme.dart';
 
 class TicTacToeInfinityApp extends StatelessWidget {
-  const TicTacToeInfinityApp({super.key, this.themeMode = ThemeMode.system});
+  const TicTacToeInfinityApp({
+    super.key,
+    this.themeMode = ThemeMode.system,
+    this.showIntro = false,
+  });
 
   static const String title = 'Tic Tac Toe Infinity';
 
   /// Follows the device setting unless a test pins it.
   final ThemeMode themeMode;
+
+  /// Opens on the intro instead of Home: only on the very first launch.
+  final bool showIntro;
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +29,16 @@ class TicTacToeInfinityApp extends StatelessWidget {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: themeMode,
-      initialRoute: HomeScreen.routeName,
+      initialRoute: showIntro
+          ? OnboardingScreen.routeName
+          : HomeScreen.routeName,
       routes: <String, WidgetBuilder>{
         HomeScreen.routeName: (BuildContext context) => const HomeScreen(),
         HowToPlayScreen.routeName: (BuildContext context) =>
             const HowToPlayScreen(),
         GameScreen.routeName: (BuildContext context) => const GameScreen(),
+        OnboardingScreen.routeName: (BuildContext context) =>
+            const OnboardingScreen(),
       },
     );
   }

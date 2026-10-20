@@ -40,7 +40,8 @@ PRODUCT RULES (source of truth)
 * DRAW (board full, no winner): reset everything to the initial state: 3x3 board, both counters 0.
 * NEW GAME button: same full reset as a draw.
 * The loser's counter never changes. All marks are cleared before every next round.
-* No persistence: every app launch starts at 3x3 with 0/0. No high scores, no history, no saved level.
+* No game persistence: every app launch starts at 3x3 with 0/0. No high scores, no history, no saved level. The ONLY thing saved on the device is whether the intro has been seen (`OnboardingStore`, shared_preferences).
+* INTRO (onboarding): 3 swipeable pages (welcome, win to grow the board, lose or draw) with Skip, Next and "Let's play". Shown only on the very first launch, then never again unless opened from "Show intro again" in the guide. If device storage cannot be read, the intro is skipped.
 * After a win or draw, further taps on the board are ignored until the next round starts. Invalid taps (occupied cell, not human's turn) are rejected.
 * AI makes exactly one legal move per turn, never out of turn, never on an occupied cell, and must not freeze the UI on large boards.
 * Gameplay is fully offline. No accounts, no backend, no analytics. The only network use is ads (INTERNET permission in the Android manifest).

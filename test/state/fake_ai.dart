@@ -112,6 +112,23 @@ class FakeAds implements AdService {
   void dispose() {}
 }
 
+/// Remembers the intro flag in memory instead of on the device.
+class FakeOnboardingStore implements OnboardingStore {
+  FakeOnboardingStore({this.seen = true});
+
+  bool seen;
+  int marks = 0;
+
+  @override
+  Future<bool> hasSeenIntro() async => seen;
+
+  @override
+  Future<void> markIntroSeen() async {
+    marks++;
+    seen = true;
+  }
+}
+
 /// Records what the music is told to do instead of playing it.
 class FakeMusic implements MusicService {
   final List<String> events = [];
