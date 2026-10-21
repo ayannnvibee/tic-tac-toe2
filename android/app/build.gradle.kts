@@ -27,8 +27,8 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.tictactoeinfinity.tic_tac_toe_infinity"
+        // Must match the Google Play listing; it can never change once published.
+        applicationId = "com.kodrilla.tiktaktoe"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
