@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
 import 'state/state.dart';
+import 'ui/screens/legal_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,8 +21,17 @@ Future<void> main() async {
     yield LicenseEntryWithLineBreaks(<String>['Nunito Sans'], license);
   });
 
-  // The intro is shown once, on the very first launch.
-  final showIntro = !await const SharedPrefsOnboardingStore().hasSeenIntro();
+  // First launch: consent (Privacy Policy and Terms of Use), then the intro.
+  const store = SharedPrefsOnboardingStore();
+  final showConsent = await store.acceptedLegalVersion() < LegalInfo.version;
+  final showIntro = !await store.hasSeenIntro();
 
-  runApp(ProviderScope(child: TicTacToeInfinityApp(showIntro: showIntro)));
+  runApp(
+    ProviderScope(
+      child: TicTacToeInfinityApp(
+        showConsent: showConsent,
+        showIntro: showIntro,
+      ),
+    ),
+  );
 }

@@ -50,6 +50,7 @@ Future<FakeAi> pumpApp(
   FakeMusic? music,
   FakeOnboardingStore? intro,
   bool showIntro = false,
+  bool showConsent = false,
   int? boardSize,
 }) async {
   tester.view.devicePixelRatio = 1;
@@ -75,7 +76,11 @@ Future<FakeAi> pumpApp(
             () => SizedGameController(boardSize),
           ),
       ],
-      child: TicTacToeInfinityApp(themeMode: themeMode, showIntro: showIntro),
+      child: TicTacToeInfinityApp(
+        themeMode: themeMode,
+        showConsent: showConsent,
+        showIntro: showIntro,
+      ),
     ),
   );
   await tester.pumpAndSettle();

@@ -40,7 +40,10 @@ PRODUCT RULES (source of truth)
 * DRAW (board full, no winner): reset everything to the initial state: 3x3 board, both counters 0.
 * NEW GAME button: same full reset as a draw.
 * The loser's counter never changes. All marks are cleared before every next round.
-* No game persistence: every app launch starts at 3x3 with 0/0. No high scores, no history, no saved level. The ONLY thing saved on the device is whether the intro has been seen (`OnboardingStore`, shared_preferences).
+* No game persistence: every app launch starts at 3x3 with 0/0. No high scores, no history, no saved level. The ONLY things saved on the device are the accepted legal version and whether the intro has been seen (`OnboardingStore`, shared_preferences).
+* FIRST LAUNCH ORDER: native splash -> CONSENT screen -> intro -> Home.
+* CONSENT: explains ads (Google AdMob, advertising ID), that no personal data is collected and scores are never saved, and how to opt out of personalised ads; links to the Privacy Policy and Terms of Use. "Agree & continue" works only after the agree checkbox is ticked. Shown again whenever `LegalInfo.version` is bumped. If storage cannot be read, consent is asked again (never assumed).
+* LEGAL: Privacy Policy and Terms of Use are bundled in the app (`lib/ui/screens/legal_screen.dart`, readable offline), opened from the consent screen and from Settings (guide > Controls tab > Legal). `LegalInfo` holds the developer name, contact email and effective date.
 * INTRO (onboarding): 3 swipeable pages (welcome, win to grow the board, lose or draw) with Skip, Next and "Let's play". Shown only on the very first launch, then never again unless opened from "Show intro again" in the guide. If device storage cannot be read, the intro is skipped.
 * After a win or draw, further taps on the board are ignored until the next round starts. Invalid taps (occupied cell, not human's turn) are rejected.
 * AI makes exactly one legal move per turn, never out of turn, never on an occupied cell, and must not freeze the UI on large boards.

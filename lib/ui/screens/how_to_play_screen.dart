@@ -8,6 +8,7 @@ import '../theme/game_colors.dart';
 import '../widgets/mark_view.dart';
 import '../widgets/mini_grid.dart';
 import '../widgets/tactile.dart';
+import 'legal_screen.dart';
 import 'onboarding_screen.dart';
 
 /// The rules, and the sound and haptics switches, on two tabs.
@@ -606,7 +607,7 @@ class _ControlsPanel extends ConsumerWidget {
     );
     final controller = ref.read(gameControllerProvider.notifier);
 
-    return SoftCard(
+    final sound = SoftCard(
       padding: const EdgeInsets.all(AppSpacing.margin),
       child: Column(
         children: [
@@ -633,6 +634,98 @@ class _ControlsPanel extends ConsumerWidget {
             onChanged: (_) => controller.toggleHaptics(),
           ),
         ],
+      ),
+    );
+
+    return Column(
+      children: [
+        sound,
+        const SizedBox(height: AppSpacing.md),
+        SoftCard(
+          padding: const EdgeInsets.all(AppSpacing.margin),
+          child: Column(
+            children: [
+              const _CardHeading(overline: 'Your data', title: 'Legal'),
+              const SizedBox(height: AppSpacing.md),
+              _LinkRow(
+                rowKey: const ValueKey('settings-privacy'),
+                icon: Icons.privacy_tip_outlined,
+                title: LegalDocument.privacyPolicy.title,
+                subtitle: 'What the game and its ads use',
+                onTap: () =>
+                    LegalScreen.open(context, LegalDocument.privacyPolicy),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              _LinkRow(
+                rowKey: const ValueKey('settings-terms'),
+                icon: Icons.description_outlined,
+                title: LegalDocument.termsOfUse.title,
+                subtitle: 'The rules for using the game',
+                onTap: () =>
+                    LegalScreen.open(context, LegalDocument.termsOfUse),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// A tappable row that opens a document.
+class _LinkRow extends StatelessWidget {
+  const _LinkRow({
+    required this.rowKey,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final Key rowKey;
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        key: rowKey,
+        borderRadius: BorderRadius.circular(AppRadii.md),
+        onTap: onTap,
+        child: InsetPanel(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              IconDisc(
+                icon: icon,
+                background: scheme.primaryFixed,
+                foreground: scheme.onPrimaryFixed,
+              ),
+              const SizedBox(width: AppSpacing.gutterSm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: theme.textTheme.labelLarge),
+                    Text(
+                      subtitle,
+                      style: theme.textTheme.bodySmall!.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: scheme.onSurfaceVariant),
+            ],
+          ),
+        ),
       ),
     );
   }

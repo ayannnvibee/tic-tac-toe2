@@ -2,12 +2,19 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Remembers whether the intro has been shown. This one flag is the only
-/// thing the app saves on the device; scores and levels never are.
+/// Remembers the first-launch steps: which version of the Privacy Policy and
+/// Terms of Use the player accepted, and whether the intro has been shown.
+/// These are the only things the app saves on the device; scores and levels
+/// never are.
 abstract class OnboardingStore {
   Future<bool> hasSeenIntro();
 
   Future<void> markIntroSeen();
+
+  /// The legal version the player accepted, or 0 if they never have.
+  Future<int> acceptedLegalVersion();
+
+  Future<void> acceptLegal(int version);
 }
 
 /// [OnboardingStore] backed by shared_preferences. If the device storage
@@ -17,6 +24,7 @@ class SharedPrefsOnboardingStore implements OnboardingStore {
   const SharedPrefsOnboardingStore();
 
   static const String _key = 'intro_seen';
+  static const String _legalKey = 'legal_accepted_version';
 
   @override
   Future<bool> hasSeenIntro() async {
@@ -37,6 +45,29 @@ class SharedPrefsOnboardingStore implements OnboardingStore {
     } catch (error) {
       debugPrint('Could not save the intro flag: $error');
       // Shown again next launch; nothing else is affected.
+    }
+  }
+
+  @override
+  Future<int> acceptedLegalVersion() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getInt(_legalKey) ?? 0;
+    } catch (error) {
+      // Unreadable storage: ask again rather than assume consent.
+      debugPrint('Could not read the consent flag: $error');
+      return 0;
+    }
+  }
+
+  @override
+  Future<void> acceptLegal(int version) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(_legalKey, version);
+    } catch (error) {
+      debugPrint('Could not save the consent flag: $error');
+      // Asked again next launch.
     }
   }
 }

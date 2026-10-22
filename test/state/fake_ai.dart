@@ -114,10 +114,19 @@ class FakeAds implements AdService {
 
 /// Remembers the intro flag in memory instead of on the device.
 class FakeOnboardingStore implements OnboardingStore {
-  FakeOnboardingStore({this.seen = true});
+  FakeOnboardingStore({this.seen = true, this.legalVersion = 1});
 
   bool seen;
   int marks = 0;
+
+  /// The accepted legal version; 0 means never accepted.
+  int legalVersion;
+
+  @override
+  Future<int> acceptedLegalVersion() async => legalVersion;
+
+  @override
+  Future<void> acceptLegal(int version) async => legalVersion = version;
 
   @override
   Future<bool> hasSeenIntro() async => seen;
