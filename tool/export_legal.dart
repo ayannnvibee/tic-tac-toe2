@@ -15,14 +15,26 @@ import 'dart:io';
 
 import 'package:tic_tac_toe_infinity/legal/legal_content.dart';
 
-const HtmlEscape _escape = HtmlEscape();
+const HtmlEscape _escape = HtmlEscape(HtmlEscapeMode.element);
+
+/// Escapes [text] and turns the support email and website into links.
+String _paragraph(String text) => _escape
+    .convert(text)
+    .replaceAll(
+      LegalInfo.supportEmail,
+      '<a href="mailto:${LegalInfo.supportEmail}">${LegalInfo.supportEmail}</a>',
+    )
+    .replaceAll(
+      '${LegalInfo.website}.',
+      '<a href="${LegalInfo.website}">${LegalInfo.website}</a>.',
+    );
 
 String _page(LegalDocument document) {
   final body = StringBuffer();
   for (final section in document.sections) {
     body.writeln('    <h2>${_escape.convert(section.heading)}</h2>');
     for (final paragraph in section.paragraphs) {
-      body.writeln('    <p>${_escape.convert(paragraph)}</p>');
+      body.writeln('    <p>${_paragraph(paragraph)}</p>');
     }
   }
   final title = '${document.title} | ${LegalInfo.appName}';

@@ -6,8 +6,10 @@ abstract final class LegalInfo {
   static const String appName = 'Tic Tac Toe Infinity';
   static const String developer = 'Kodrilla';
 
-  /// Kodrilla's legal hub, which lists every app's documents and how to get
-  /// in touch.
+  static const String supportEmail = 'support@kodrilla.com';
+  static const String website = 'https://kodrilla.com';
+
+  /// Kodrilla's legal hub, which lists every app's documents.
   static const String hub = 'kodrilla.com/legal';
 
   /// Where the two documents live online. Google Play needs the privacy
@@ -95,8 +97,8 @@ const List<LegalSection> _privacySections = [
         'last updated.',
   ]),
   LegalSection('Contact', [
-    'Questions about this policy? Visit ${LegalInfo.hub} for ways to '
-        'contact ${LegalInfo.developer}.',
+    'Questions about this policy? Contact ${LegalInfo.developer} at '
+        '${LegalInfo.supportEmail} or visit ${LegalInfo.website}.',
   ]),
 ];
 
@@ -142,7 +144,7 @@ const List<LegalSection> _termsSections = [
         'new terms apply.',
   ]),
   LegalSection('Contact', [
-    'Questions about these terms? Visit ${LegalInfo.hub} for ways to '
-        'contact ${LegalInfo.developer}.',
+    'Questions about these terms? Contact ${LegalInfo.developer} at '
+        '${LegalInfo.supportEmail} or visit ${LegalInfo.website}.',
   ]),
 ];
