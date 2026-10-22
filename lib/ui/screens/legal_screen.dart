@@ -1,139 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../legal/legal_content.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/tactile.dart';
 
-/// Who publishes the game and how to reach them, used in both documents.
-abstract final class LegalInfo {
-  static const String appName = 'Tic Tac Toe Infinity';
-  static const String developer = 'Kodrilla';
-
-  // TODO(release): replace with the real support email before publishing.
-  static const String contactEmail = '[contact email to be added]';
-
-  static const String effectiveDate = '22 October 2026';
-
-  /// Bump when either document changes in a way players must accept again;
-  /// the consent screen is then shown once more on the next launch.
-  static const int version = 1;
-}
-
-/// One heading and its paragraphs.
-class LegalSection {
-  const LegalSection(this.heading, this.paragraphs);
-
-  final String heading;
-  final List<String> paragraphs;
-}
-
-/// The two documents, bundled in the app so they can be read offline.
-enum LegalDocument {
-  privacyPolicy('Privacy Policy', _privacySections),
-  termsOfUse('Terms of Use', _termsSections);
-
-  const LegalDocument(this.title, this.sections);
-
-  final String title;
-  final List<LegalSection> sections;
-}
-
-const List<LegalSection> _privacySections = [
-  LegalSection('Overview', [
-    '${LegalInfo.appName} ("the game") is published by ${LegalInfo.developer} '
-        '("we", "us"). This policy explains what information is used when you '
-        'play and why. We built the game to collect as little as possible.',
-  ]),
-  LegalSection('What we collect', [
-    'Nothing that identifies you. The game has no accounts, no sign-in, no '
-        'analytics and no server of its own. Your games, scores and levels '
-        'are never saved or sent anywhere; every launch starts fresh.',
-    'Two small settings are stored only on your device: whether you have '
-        'accepted this policy and the Terms of Use, and whether you have seen '
-        'the intro. They are deleted when you uninstall the game.',
-  ]),
-  LegalSection('Advertising', [
-    'The game is free and shows ads from Google AdMob, a service of Google. '
-        'To show and measure ads, Google may collect and use information from '
-        'your device, such as its advertising ID, IP address, approximate '
-        'location, device type and how you interact with ads. Google may use '
-        'this to show you ads that are more relevant to you.',
-    'This information goes directly to Google; we do not receive or store '
-        'it. Google describes how it uses data at '
-        'policies.google.com/technologies/partner-sites, and its privacy '
-        'policy is at policies.google.com/privacy.',
-    'You can reset your advertising ID or opt out of personalised ads at any '
-        'time in your phone\'s settings (Settings > Google > Ads, or Settings '
-        '> Privacy > Ads, depending on your phone).',
-  ]),
-  LegalSection('Internet access', [
-    'Gameplay works fully offline. The game only uses the internet to load '
-        'ads. Without a connection the game works normally, just without ads.',
-  ]),
-  LegalSection('Children', [
-    'The game is intended for a general audience and is not directed at '
-        'children under 13. We do not knowingly collect personal information '
-        'from children.',
-  ]),
-  LegalSection('Security and retention', [
-    'Because we do not collect personal information, we do not keep any. The '
-        'two on-device settings stay until you uninstall the game or clear '
-        'its data.',
-  ]),
-  LegalSection('Changes to this policy', [
-    'We may update this policy. If the change matters, the game will ask you '
-        'to review and accept it again. The date at the top shows when it was '
-        'last updated.',
-  ]),
-  LegalSection('Contact', [
-    'Questions about this policy: ${LegalInfo.contactEmail}',
-  ]),
-];
-
-const List<LegalSection> _termsSections = [
-  LegalSection('Agreement', [
-    'By playing ${LegalInfo.appName} ("the game"), published by '
-        '${LegalInfo.developer}, you agree to these Terms of Use and to our '
-        'Privacy Policy. If you do not agree, please do not use the game.',
-  ]),
-  LegalSection('Using the game', [
-    'We give you a personal, non-exclusive, non-transferable licence to '
-        'install and play the game on devices you own or control, for your own '
-        'non-commercial entertainment.',
-    'You may not copy, modify, sell, rent or distribute the game, or try to '
-        'reverse engineer it or interfere with the ads it shows, except where '
-        'the law allows it.',
-  ]),
-  LegalSection('Ads', [
-    'The game is free and supported by ads from Google AdMob. Some features, '
-        'such as a second chance after losing, are offered in return for '
-        'watching an ad. Ads are provided by Google and its partners, and we '
-        'are not responsible for their content or for the sites they link to.',
-  ]),
-  LegalSection('Ownership', [
-    'The game, its design, artwork, sounds and code belong to '
-        '${LegalInfo.developer}. These terms do not give you any ownership of '
-        'them.',
-  ]),
-  LegalSection('No warranty', [
-    'The game is provided "as is" and "as available", without warranties of '
-        'any kind. We do not promise that it will always be available or free '
-        'of errors, and we may change or stop offering it at any time.',
-  ]),
-  LegalSection('Limitation of liability', [
-    'To the fullest extent the law allows, ${LegalInfo.developer} is not '
-        'liable for any indirect, incidental or consequential loss arising '
-        'from your use of the game. Nothing in these terms limits rights you '
-        'have under consumer law that cannot be limited.',
-  ]),
-  LegalSection('Changes to these terms', [
-    'We may update these terms. If the change matters, the game will ask you '
-        'to review and accept them again. If you keep playing after that, the '
-        'new terms apply.',
-  ]),
-  LegalSection('Contact', [
-    'Questions about these terms: ${LegalInfo.contactEmail}',
-  ]),
-];
+export '../../legal/legal_content.dart';
 
 /// Shows one legal document, readable offline.
 class LegalScreen extends StatelessWidget {
@@ -198,6 +69,14 @@ class LegalScreen extends StatelessWidget {
                               'Last updated: ${LegalInfo.effectiveDate}',
                               style: theme.textTheme.labelMedium!.copyWith(
                                 color: scheme.onSurfaceVariant,
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.xs),
+                            SelectableText(
+                              'Also online: ${document.url}',
+                              key: const ValueKey('legal-url'),
+                              style: theme.textTheme.labelMedium!.copyWith(
+                                color: scheme.primary,
                               ),
                             ),
                             for (final section in document.sections) ...[

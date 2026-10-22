@@ -66,6 +66,12 @@ void main() {
     expect(find.byType(LegalScreen), findsOneWidget);
     expect(textOf(tester, 'legal-title'), 'Privacy Policy');
     expect(find.text('Advertising'), findsOneWidget);
+    expect(
+      find.text(
+        'Also online: https://kodrilla.com/legal/tic-tac-toe/privacy-policy',
+      ),
+      findsOneWidget,
+    );
     await tester.pageBack();
     await tester.pumpAndSettle();
     expect(find.byType(ConsentScreen), findsOneWidget);
